@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 
 // Grid Background Component
-const GridBackground = () => {
+export const GridBackground = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {

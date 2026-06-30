@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState, memo } from 'react';
+import React, { useEffect, useState, useRef, memo } from 'react';
 
 // --- Type Definitions ---
 type IconType = 'html' | 'css' | 'javascript' | 'react' | 'node' | 'tailwind';
@@ -197,11 +197,12 @@ const OrbitingSkill = memo(({ config, angle }: OrbitingSkillProps) => {
         }}
       >
         <SkillIcon type={iconType} />
-        {isHovered && (
-          <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900/95 backdrop-blur-sm rounded text-xs text-white whitespace-nowrap pointer-events-none">
-            {label}
-          </div>
-        )}
+        <div
+          className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-medium text-white/80 whitespace-nowrap pointer-events-none select-none"
+          style={{ textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}
+        >
+          {label}
+        </div>
       </div>
     </div>
   );
@@ -262,6 +263,24 @@ GlowingOrbitPath.displayName = 'GlowingOrbitPath';
 export default function OrbitingSkills() {
   const [time, setTime] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [scale, setScale] = useState(1);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Design baseline: 450px container, outer orbit 180px radius + 25px icon half = 410px needed
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const updateScale = () => {
+      const size = el.offsetWidth;
+      setScale(Math.min(1, (size - 20) / 410));
+    };
+
+    updateScale();
+    const ro = new ResizeObserver(updateScale);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   useEffect(() => {
     if (isPaused) return;
@@ -290,8 +309,8 @@ export default function OrbitingSkills() {
     <main className="w-full flex items-center justify-center overflow-hidden">
       {/* Background pattern */}
       <div className="absolute inset-0 opacity-10">
-        <div 
-          className="absolute inset-0" 
+        <div
+          className="absolute inset-0"
           style={{
             backgroundImage: `radial-gradient(circle at 25% 25%, #374151 0%, transparent 50%),
                              radial-gradient(circle at 75% 75%, #4B5563 0%, transparent 50%)`,
@@ -299,51 +318,57 @@ export default function OrbitingSkills() {
         />
       </div>
 
-      <div 
+      <div
+        ref={containerRef}
         className="relative w-[calc(100vw-40px)] h-[calc(100vw-40px)] md:w-[450px] md:h-[450px] flex items-center justify-center"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
       >
-        
-        {/* Central "Code" Icon with enhanced glow */}
-        <div className="w-20 h-20 bg-gradient-to-br from-gray-700 to-gray-900 rounded-full flex items-center justify-center z-10 relative shadow-2xl">
-          <div className="absolute inset-0 rounded-full bg-cyan-500/30 blur-xl animate-pulse"></div>
-          <div className="absolute inset-0 rounded-full bg-purple-500/20 blur-2xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-          <div className="relative z-10">
-            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="url(#gradient)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <defs>
-                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#06B6D4" />
-                  <stop offset="100%" stopColor="#9333EA" />
-                </linearGradient>
-              </defs>
-              <polyline points="16 18 22 12 16 6"></polyline>
-              <polyline points="8 6 2 12 8 18"></polyline>
-            </svg>
+        {/* Scaled inner wrapper so orbits never overflow the container */}
+        <div
+          className="absolute inset-0 flex items-center justify-center"
+          style={{ transform: `scale(${scale})`, transformOrigin: 'center center' }}
+        >
+          {/* Central "Code" Icon with enhanced glow */}
+          <div className="w-20 h-20 bg-gradient-to-br from-gray-700 to-gray-900 rounded-full flex items-center justify-center z-10 relative shadow-2xl">
+            <div className="absolute inset-0 rounded-full bg-cyan-500/30 blur-xl animate-pulse"></div>
+            <div className="absolute inset-0 rounded-full bg-purple-500/20 blur-2xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+            <div className="relative z-10">
+              <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="url(#gradient)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <defs>
+                  <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#06B6D4" />
+                    <stop offset="100%" stopColor="#9333EA" />
+                  </linearGradient>
+                </defs>
+                <polyline points="16 18 22 12 16 6"></polyline>
+                <polyline points="8 6 2 12 8 18"></polyline>
+              </svg>
+            </div>
           </div>
-        </div>
 
-        {/* Render glowing orbit paths */}
-        {orbitConfigs.map((config) => (
-          <GlowingOrbitPath
-            key={`path-${config.radius}`}
-            radius={config.radius}
-            glowColor={config.glowColor}
-            animationDelay={config.delay}
-          />
-        ))}
-
-        {/* Render orbiting skill icons */}
-        {skillsConfig.map((config) => {
-          const angle = time * config.speed + (config.phaseShift || 0);
-          return (
-            <OrbitingSkill
-              key={config.id}
-              config={config}
-              angle={angle}
+          {/* Render glowing orbit paths */}
+          {orbitConfigs.map((config) => (
+            <GlowingOrbitPath
+              key={`path-${config.radius}`}
+              radius={config.radius}
+              glowColor={config.glowColor}
+              animationDelay={config.delay}
             />
-          );
-        })}
+          ))}
+
+          {/* Render orbiting skill icons */}
+          {skillsConfig.map((config) => {
+            const angle = time * config.speed + (config.phaseShift || 0);
+            return (
+              <OrbitingSkill
+                key={config.id}
+                config={config}
+                angle={angle}
+              />
+            );
+          })}
+        </div>
       </div>
     </main>
   );

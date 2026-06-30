@@ -2,7 +2,6 @@ import Portfolio from './comps/hero';
 import OrbitingSkills from './comps/orbiting';
 import Divider from '@/components/ui/divider';
 import Projects from './comps/projects';
-import { Navigation } from 'lucide-react';
 import { GridBackground } from "./comps/movinv-grid"
 
 const coderData = {
@@ -49,34 +48,64 @@ const Contact = () => (
     className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 relative z-10"
     aria-label="Contact section"
   >
-    <h2 className="animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-8 text-center">
+    <h2 className="animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4 text-center">
       Get in{' '}
       <span className="bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
         Touch
       </span>
     </h2>
-    <p
-      className="animate-fade-in-up text-slate-600/80 dark:text-slate-300/80 text-base sm:text-lg max-w-2xl mx-auto text-center"
-      style={{ animationDelay: '200ms' }}
-    >
-      Reach out to me via email at{' '}
+    <p className="text-slate-600/80 dark:text-slate-300/80 text-sm sm:text-base text-center mb-8">
+      Or email me directly at{' '}
       <a
-        href="mailto:omar.ajimi@example.com"
-        className="text-cyan-600 dark:text-cyan-300 hover:text-cyan-700 dark:hover:text-cyan-200"
+        href="mailto:ajimiomar.oa@gmail.com"
+        className="text-cyan-600 dark:text-cyan-300 hover:underline"
       >
         ajimiomar.oa@gmail.com
-      </a>{' '}
-      or connect on{' '}
-      <a
-        href="https://www.linkedin.com/in/omar-ajimi-7a5341118/"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-cyan-600 dark:text-cyan-300 hover:text-cyan-700 dark:hover:text-cyan-200"
-      >
-        LinkedIn
       </a>
-      .
     </p>
+
+    <form
+      action="https://formsubmit.co/ajimiomar.oa@gmail.com"
+      method="POST"
+      className="max-w-xl mx-auto flex flex-col gap-4"
+    >
+      {/* Formsubmit config: disable captcha, set subject */}
+      <input type="hidden" name="_captcha" value="false" />
+      <input type="hidden" name="_subject" value="New message from your portfolio" />
+      <input type="hidden" name="_template" value="table" />
+
+      <div className="flex flex-col sm:flex-row gap-4">
+        <input
+          type="text"
+          name="name"
+          required
+          placeholder="Your name"
+          className="flex-1 px-4 py-3 rounded-lg bg-white/70 dark:bg-gray-800/70 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 dark:focus:ring-cyan-400 backdrop-blur-sm"
+        />
+        <input
+          type="email"
+          name="email"
+          required
+          placeholder="Your email"
+          className="flex-1 px-4 py-3 rounded-lg bg-white/70 dark:bg-gray-800/70 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 dark:focus:ring-cyan-400 backdrop-blur-sm"
+        />
+      </div>
+
+      <textarea
+        name="message"
+        required
+        rows={5}
+        placeholder="Your message..."
+        className="px-4 py-3 rounded-lg bg-white/70 dark:bg-gray-800/70 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 dark:focus:ring-cyan-400 backdrop-blur-sm resize-none"
+      />
+
+      <button
+        type="submit"
+        className="self-center px-8 py-3 rounded-lg font-semibold text-white bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 transition-all duration-300 shadow-lg hover:shadow-cyan-500/25"
+      >
+        Send Message
+      </button>
+    </form>
   </section>
 );
 
@@ -84,7 +113,6 @@ export default function Home() {
   return (
     <div className="relative w-full min-h-screen">
       <GridBackground/>
-      <Navigation />
       <div
         className="absolute inset-0 z-0 dark:hidden"
         style={{

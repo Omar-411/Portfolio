@@ -35,54 +35,69 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 lg:px-8 py-4">
-      <div className="container mx-auto max-w-7xl">
-        <div className="bg-gray-900/80 dark:bg-white/10 backdrop-blur-sm border border-gray-700 dark:border-gray-600 rounded-full px-4 sm:px-6 py-3 shadow-lg">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold text-sm">OA</span>
-              </div>
-              <span className="text-gray-200 dark:text-gray-300 font-semibold text-lg hidden sm:block">Omar Ajimi</span>
+    <nav className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 lg:px-8 py-3">
+      <div className="container mx-auto max-w-5xl">
+        <div
+          className="flex items-center justify-between rounded-2xl px-4 sm:px-5 py-2.5
+            bg-gray-950/70 dark:bg-gray-950/70 backdrop-blur-md
+            border border-white/10
+            shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_8px_32px_rgba(0,0,0,0.4)]"
+        >
+          {/* Logo */}
+          <button
+            onClick={() => scrollToSection("home")}
+            className="flex items-center gap-2.5 group"
+          >
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/20 group-hover:shadow-purple-500/40 transition-shadow duration-300">
+             <img src="/avatar.png" alt="Logo" className="w-full h-full object-contain" />
             </div>
-            <div className="hidden md:flex items-center gap-1">
+            <span className="hidden sm:block text-white font-semibold text-sm tracking-wide">
+              Omar<span className="text-purple-400"> Ajimi</span>
+            </span>
+          </button>
+
+          {/* Desktop links */}
+          <div className="hidden md:flex items-center gap-1 bg-white/5 rounded-xl px-1.5 py-1">
+            {navItems.map((item) => (
+              <button
+                key={item.name}
+                onClick={() => scrollToSection(item.href)}
+                className="px-4 py-1.5 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-200 text-sm font-medium"
+              >
+                {item.name}
+              </button>
+            ))}
+          </div>
+
+          {/* Right side */}
+          <div className="flex items-center gap-2">
+            <ModeToggle />
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="md:hidden p-1.5 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-200"
+              aria-label="Toggle menu"
+            >
+              {isMenuOpen ? <X size={18} /> : <Menu size={18} />}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile dropdown */}
+        {isMenuOpen && (
+          <div className="md:hidden mt-2 rounded-2xl overflow-hidden bg-gray-950/90 backdrop-blur-md border border-white/10 shadow-xl">
+            <div className="flex flex-col p-2 gap-1">
               {navItems.map((item) => (
                 <button
                   key={item.name}
                   onClick={() => scrollToSection(item.href)}
-                  className="px-4 py-2 text-gray-200 dark:text-gray-300 hover:text-white dark:hover:text-white hover:bg-gray-800 dark:hover:bg-white/20 rounded-full transition-all duration-300 text-sm font-medium"
+                  className="px-4 py-3 text-gray-300 hover:text-white hover:bg-white/10 rounded-xl transition-all duration-200 text-sm font-medium text-left"
                 >
                   {item.name}
                 </button>
               ))}
             </div>
-            <div className="flex items-center gap-2">
-              <ModeToggle />
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="md:hidden p-2 text-gray-200 dark:text-gray-300 hover:text-white dark:hover:text-white hover:bg-gray-800 dark:hover:bg-white/20 rounded-full transition-all duration-300"
-                aria-label="Toggle menu"
-              >
-                {isMenuOpen ? <X size={18} /> : <Menu size={18} />}
-              </button>
-            </div>
           </div>
-          {isMenuOpen && (
-            <div className="md:hidden mt-4 pt-4 border-t border-gray-700 dark:border-gray-600">
-              <div className="flex flex-col gap-2">
-                {navItems.map((item) => (
-                  <button
-                    key={item.name}
-                    onClick={() => scrollToSection(item.href)}
-                    className="px-4 py-2 text-gray-200 dark:text-gray-300 hover:text-white dark:hover:text-white hover:bg-gray-800 dark:hover:bg-white/20 rounded-lg transition-all duration-300 text-sm font-medium text-left"
-                  >
-                    {item.name}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
+        )}
       </div>
     </nav>
   )
