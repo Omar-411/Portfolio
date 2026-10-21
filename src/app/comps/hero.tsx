@@ -1,344 +1,574 @@
 "use client"
-import { useState } from "react"
-import { Menu, X } from "lucide-react"
-import LoadingButton from "./loading-button"
-import LoadingScreen from "./loading-screen"
-import { ModeToggle } from "./mode-toogle"
 
-const DotIcon = () => (
-  <svg width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="4" cy="4" r="4" fill="currentColor" />
-  </svg>
-)
+import { useState, useEffect } from "react"
+import { useRouter, usePathname } from "next/navigation"
+import { motion, type Variants } from "framer-motion"
+import { Download, ArrowRight, Github, Linkedin, Menu, X } from "lucide-react"
+import LoadingScreen from "./loading-screen"
+import MatrixRain from "./matrix-rain"
+import AuroraBackground from "./aurora-bg"
+
+// ─── Framer-Motion variants ───────────────────────────────────────────────────
+const containerVariants: Variants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+}
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 28 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.55, ease: "easeOut" },
+  },
+}
+
+// ─── Navbar ──────────────────────────────────────────────────────────────────
+const NAV_ITEMS = [
+  { label: "About",    href: "/portfolio#hero",     id: "hero",     index: 0 },
+  { label: "Projects", href: "/portfolio#projects", id: "projects", index: 1 },
+  { label: "Skills",   href: "/portfolio#skills",   id: "skills",   index: 2 },
+  { label: "Contact",  href: "/portfolio#contact",  id: "contact",  index: 3 },
+]
 
 const Navbar = () => {
+  const router = useRouter()
+  const pathname = usePathname()
+  const isPortfolio = pathname === "/portfolio"
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const navItems = [
-    { name: "About", href: "home" },
-    { name: "Projects", href: "projects" },
-    { name: "Skills", href: "skills" },
-    { name: "Contact", href: "contact" },
-  ]
+  const [activeSection, setActiveSection] = useState("hero")
 
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId)
-    if (element) {
-      const navHeight = 80 // Account for navbar height
-      const elementPosition = element.offsetTop - navHeight
-
-      window.scrollTo({
-        top: elementPosition,
-        behavior: "smooth",
-      })
-      setIsMenuOpen(false)
+  const navigateToSection = (href: string) => {
+    if (isPortfolio) {
+      const hash = href.split("#")[1];
+      const el = document.getElementById(hash);
+      const main = document.querySelector('main') as HTMLElement | null;
+      if (el && main) main.scrollTo({ top: el.offsetTop, behavior: 'smooth' });
+      else router.push(href);
+    } else {
+      router.push(href);
     }
+    setIsMenuOpen(false);
   }
 
+  useEffect(() => {
+    if (!isPortfolio) return;
+    const main = document.querySelector('main') as HTMLElement | null;
+    if (!main) return;
+
+    const handleScroll = () => {
+      const idx = Math.round(main.scrollTop / main.clientHeight);
+      const clamped = Math.max(0, Math.min(idx, NAV_ITEMS.length - 1));
+      const item = NAV_ITEMS[clamped];
+      if (item) setActiveSection(item.id);
+    };
+
+    main.addEventListener("scroll", handleScroll, { passive: true });
+    return () => main.removeEventListener("scroll", handleScroll);
+  }, [isPortfolio])
+
+  useEffect(() => {
+    if (!isPortfolio) return;
+    const hash = window.location.hash.slice(1);
+    if (hash) {
+      const el = document.getElementById(hash);
+      const main = document.querySelector('main') as HTMLElement | null;
+      if (el && main) {
+        setTimeout(() => main.scrollTo({ top: el.offsetTop, behavior: 'smooth' }), 100);
+      }
+    }
+  }, [isPortfolio])
+
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 lg:px-8 py-3">
-      <div className="container mx-auto max-w-5xl">
-        <div
-          className="flex items-center justify-between rounded-2xl px-4 sm:px-5 py-2.5
-            bg-gray-950/70 dark:bg-gray-950/70 backdrop-blur-md
-            border border-white/10
-            shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_8px_32px_rgba(0,0,0,0.4)]"
+    <nav className="fixed top-0 left-0 right-0 z-50">
+      <div className="max-w-6xl mx-auto px-6 flex items-center justify-between h-16">
+        {/* Logo */}
+        <button
+          onClick={() => navigateToSection("/portfolio#hero")}
+          className="w-9 h-9 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg
+            flex items-center justify-center text-white font-bold text-sm
+            hover:shadow-[0_0_16px_rgba(0,255,106,0.5)] transition-shadow duration-300"
+          style={{ fontFamily: "var(--font-syne)" }}
+          aria-label="Go to portfolio"
         >
-          {/* Logo */}
-          <button
-            onClick={() => scrollToSection("home")}
-            className="flex items-center gap-2.5 group"
-          >
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/20 group-hover:shadow-purple-500/40 transition-shadow duration-300">
-             <img src="/avatar.png" alt="Logo" className="w-full h-full object-contain" />
-            </div>
-            <span className="hidden sm:block text-white font-semibold text-sm tracking-wide">
-              Omar<span className="text-purple-400"> Ajimi</span>
-            </span>
-          </button>
+          OA
+        </button>
 
-          {/* Desktop links */}
-          <div className="hidden md:flex items-center gap-1 bg-white/5 rounded-xl px-1.5 py-1">
-            {navItems.map((item) => (
-              <button
-                key={item.name}
-                onClick={() => scrollToSection(item.href)}
-                className="px-4 py-1.5 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-200 text-sm font-medium"
-              >
-                {item.name}
-              </button>
-            ))}
-          </div>
-
-          {/* Right side */}
-          <div className="flex items-center gap-2">
-            <ModeToggle />
+        {/* Desktop pill nav */}
+        <div className="hidden md:flex items-center bg-white/5 backdrop-blur-md border border-white/10 rounded-full px-2 py-1 gap-1">
+          {NAV_ITEMS.map(({ label, id, href }) => (
             <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden p-1.5 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-200"
-              aria-label="Toggle menu"
+              key={id}
+              onClick={() => navigateToSection(href)}
+              className={`px-4 py-1.5 text-sm rounded-full transition-all duration-200
+                ${activeSection === id
+                  ? "text-[#00ff6a] bg-white/10"
+                  : "text-white/60 hover:text-[#00ff6a] hover:bg-white/5"
+                }`}
             >
-              {isMenuOpen ? <X size={18} /> : <Menu size={18} />}
+              {label}
             </button>
-          </div>
+          ))}
         </div>
 
-        {/* Mobile dropdown */}
-        {isMenuOpen && (
-          <div className="md:hidden mt-2 rounded-2xl overflow-hidden bg-gray-950/90 backdrop-blur-md border border-white/10 shadow-xl">
-            <div className="flex flex-col p-2 gap-1">
-              {navItems.map((item) => (
-                <button
-                  key={item.name}
-                  onClick={() => scrollToSection(item.href)}
-                  className="px-4 py-3 text-gray-300 hover:text-white hover:bg-white/10 rounded-xl transition-all duration-200 text-sm font-medium text-left"
-                >
-                  {item.name}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
+        {/* Right side */}
+        <div className="flex items-center gap-3">
+          <a
+            href="https://github.com/Omar-411"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-white/40 hover:text-[#00ff6a] transition-colors duration-200"
+            aria-label="GitHub"
+          >
+            <Github size={18} />
+          </a>
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="md:hidden p-1.5 text-white/40 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-200"
+            aria-label="Toggle menu"
+          >
+            {isMenuOpen ? <X size={18} /> : <Menu size={18} />}
+          </button>
+        </div>
       </div>
+
+      {/* Mobile full-screen overlay */}
+      {isMenuOpen && (
+        <div
+          className="fixed inset-0 bg-[#020b06]/95 backdrop-blur-md z-40 flex flex-col items-center justify-center gap-8"
+          onClick={() => setIsMenuOpen(false)}
+        >
+          {NAV_ITEMS.map(({ label, id, href }) => (
+            <button
+              key={id}
+              onClick={(e) => { e.stopPropagation(); navigateToSection(href); }}
+              className="text-3xl font-bold text-white/70 hover:text-[#00ff6a] transition-colors duration-200"
+              style={{ fontFamily: "var(--font-syne)" }}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      )}
     </nav>
   )
 }
 
-const coderData = {
-  name: "Omar Ajimi",
-  role: "Full-Stack Developer",
-  seniority: "Mid-Level",
-  location: "Tunisia",
-  skills: ["ReactJs", "MongoDb", "Nodejs", "Expressjs", "Blockchain", "Solidity", "Web3"],
-}
 
-const CoderProfileCard = () => {
-  return (
-    <div className="animate-fade-in-up w-full mx-auto bg-gray-900/80 dark:bg-white/10 border border-gray-700 dark:border-gray-600 relative rounded-lg shadow-lg backdrop-blur-sm">
-      <div className="flex flex-row">
-        <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-pink-500 to-violet-600"></div>
-        <div className="h-[2px] w-full bg-gradient-to-r from-violet-600 to-transparent"></div>
-      </div>
-      <div className="px-4 lg:px-8 py-5 flex justify-between items-center bg-gray-800/50 dark:bg-black/50">
-        <div className="flex flex-row space-x-2">
-          <div className="h-3 w-3 rounded-full bg-red-500"></div>
-          <div className="h-3 w-3 rounded-full bg-orange-400"></div>
-          <div className="h-3 w-3 rounded-full bg-green-400"></div>
-        </div>
-        <div className="text-xs text-gray-400 dark:text-gray-500 font-mono">coder.js</div>
-      </div>
-      <div className="overflow-hidden border-t-[2px] border-gray-700 dark:border-indigo-900 px-4 lg:px-8 py-4 lg:py-8 relative">
-        <div className="absolute -top-24 -left-24 w-56 h-56 bg-blue-600 rounded-full opacity-10 filter blur-3xl"></div>
-        <div className="absolute -bottom-24 -right-24 w-56 h-56 bg-pink-600 rounded-full opacity-10 filter blur-3xl"></div>
-        <div className="relative flex">
-          <div className="hidden md:flex flex-col items-end pr-4 text-gray-500 dark:text-gray-600 font-mono text-xs">
-            {Array.from({ length: 12 }, (_, i) => (
-              <div key={i} className="leading-relaxed select-none opacity-70">
-                {i + 1}
-              </div>
-            ))}
-          </div>
-          <code className="font-mono text-xs md:text-sm lg:text-base w-full">
-            <div>
-              <span className="mr-2 text-pink-500 dark:text-pink-400">const</span>
-              <span className="mr-2 text-violet-500 dark:text-violet-400">coder</span>
-              <span className="mr-2 text-pink-500 dark:text-pink-400">=</span>
-              <span className="text-gray-400 dark:text-gray-500">{"{"}</span>
-            </div>
-            <div className="pl-6">
-              <span className="text-gray-200 dark:text-white">name:</span>
-              <span className="text-gray-400 dark:text-gray-500">&#39;</span>
-              <span className="text-green-600 dark:text-green-400">{coderData.name}</span>
-              <span className="text-gray-400 dark:text-gray-500">&#39;,</span>
-            </div>
-            <div className="pl-6">
-              <span className="text-gray-200 dark:text-white">role:</span>
-              <span className="text-gray-400 dark:text-gray-500">&#39;</span>
-              <span className="text-green-600 dark:text-green-400">{coderData.role}</span>
-              <span className="text-gray-400 dark:text-gray-500">&#39;,</span>
-            </div>
-            <div className="pl-6">
-              <span className="text-gray-200 dark:text-white">seniority:</span>
-              <span className="text-gray-400 dark:text-gray-500">&#39;</span>
-              <span className="text-green-600 dark:text-green-400">{coderData.seniority}</span>
-              <span className="text-gray-400 dark:text-gray-500">&#39;,</span>
-            </div>
-            <div className="pl-6">
-              <span className="text-gray-200 dark:text-white">location:</span>
-              <span className="text-gray-400 dark:text-gray-500">&#39;</span>
-              <span className="text-green-600 dark:text-green-400">{coderData.location}</span>
-              <span className="text-gray-400 dark:text-gray-500">&#39;,</span>
-            </div>
-            <div className="pl-6">
-              <span className="text-gray-200 dark:text-white">skills:</span>
-              <span className="text-gray-400 dark:text-gray-500">{"["}</span>
-              <div className="pl-6 flex flex-wrap">
-                {coderData.skills.map((skill, index) => (
-                  <span
-                    key={skill}
-                    className="animate-typing mr-1 inline-block"
-                    style={{ animationDelay: `${index * 300}ms` }}
-                  >
-                    <span className="text-gray-400 dark:text-gray-500">&#39;</span>
-                    <span className="text-cyan-600 dark:text-cyan-400">{skill}</span>
-                    <span className="text-gray-400 dark:text-gray-500">&#39;</span>
-                    {index < coderData.skills.length - 1 && (
-                      <span className="text-gray-400 dark:text-gray-500">, </span>
-                    )}
-                  </span>
-                ))}
-              </div>
-              <span className="text-gray-400 dark:text-gray-500">{"],"}</span>
-            </div>
-            <div>
-              <span className="text-gray-400 dark:text-gray-500">{"};"}</span>
-            </div>
-          </code>
-        </div>
-      </div>
-      <div className="px-4 lg:px-8 pb-4 mt-4 border-t border-gray-700 dark:border-gray-800 pt-3 text-xs text-gray-400 dark:text-gray-500 flex justify-between items-center">
-        <span>UTF-8</span>
-        <span>JavaScript</span>
-        <span>Ln 12, Col 2</span>
-      </div>
+// ─── SkillPills ───────────────────────────────────────────────────────────────
+const SKILLS = [
+  "TypeScript", "React", "Node.js", "MongoDB", "Express",
+  "Solidity", "Web3", "Docker", "WebSocket", "Next.js", "Tailwind", "Git",
+]
+
+const SkillPills = () => (
+  <div className="flex flex-wrap gap-2">
+    {SKILLS.map((skill) => (
+      <span
+        key={skill}
+        className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium cursor-default
+          transition-all duration-200 hover:scale-105"
+        style={{
+          background: "rgba(0,255,100,0.06)",
+          border: "1px solid rgba(0,255,100,0.2)",
+          color: "#00c87a",
+        }}
+        onMouseEnter={(e) => {
+          const el = e.currentTarget as HTMLElement
+          el.style.background = "rgba(0,255,100,0.12)"
+          el.style.border = "1px solid rgba(0,255,100,0.4)"
+          el.style.boxShadow = "0 0 12px rgba(0,255,106,0.25)"
+        }}
+        onMouseLeave={(e) => {
+          const el = e.currentTarget as HTMLElement
+          el.style.background = "rgba(0,255,100,0.06)"
+          el.style.border = "1px solid rgba(0,255,100,0.2)"
+          el.style.boxShadow = "none"
+        }}
+      >
+        {skill}
+      </span>
+    ))}
+  </div>
+)
+
+// ─── HeroCodeCard ─────────────────────────────────────────────────────────────
+const CODE_LINES: { lineNum: number; jsx: React.ReactNode }[] = [
+  {
+    lineNum: 1,
+    jsx: (
+      <>
+        <span className="text-[#ff79c6]">const</span>{" "}
+        <span className="text-[#bd93f9]">coder</span>{" "}
+        <span className="text-[#ff79c6]">=</span>{" "}
+        <span className="text-white/40">{"{"}</span>
+      </>
+    ),
+  },
+  {
+    lineNum: 2,
+    jsx: (
+      <span className="pl-5 inline-block">
+        <span className="text-[#f8f8f2]">name: </span>
+        <span className="text-white/40">&apos;</span>
+        <span className="text-[#00ff6a]">Omar Ajimi</span>
+        <span className="text-white/40">&apos;,</span>
+      </span>
+    ),
+  },
+  {
+    lineNum: 3,
+    jsx: (
+      <span className="pl-5 inline-block">
+        <span className="text-[#f8f8f2]">role: </span>
+        <span className="text-white/40">&apos;</span>
+        <span className="text-[#00ff6a]">Full-Stack Developer</span>
+        <span className="text-white/40">&apos;,</span>
+      </span>
+    ),
+  },
+  {
+    lineNum: 4,
+    jsx: (
+      <span className="pl-5 inline-block">
+        <span className="text-[#f8f8f2]">seniority: </span>
+        <span className="text-white/40">&apos;</span>
+        <span className="text-[#00ff6a]">Mid-Level</span>
+        <span className="text-white/40">&apos;,</span>
+      </span>
+    ),
+  },
+  {
+    lineNum: 5,
+    jsx: (
+      <span className="pl-5 inline-block">
+        <span className="text-[#f8f8f2]">location: </span>
+        <span className="text-white/40">&apos;</span>
+        <span className="text-[#00ff6a]">Tunisia</span>
+        <span className="text-white/40">&apos;,</span>
+      </span>
+    ),
+  },
+  {
+    lineNum: 6,
+    jsx: (
+      <span className="pl-5 inline-block">
+        <span className="text-[#f8f8f2]">skills: </span>
+        <span className="text-white/40">{"["}</span>
+      </span>
+    ),
+  },
+  {
+    lineNum: 7,
+    jsx: (
+      <span className="pl-10 inline-block">
+        <span className="text-white/40">&apos;</span>
+        <span className="text-[#00ff6a]">React</span>
+        <span className="text-white/40">&apos;, &apos;</span>
+        <span className="text-[#00ff6a]">Node.js</span>
+        <span className="text-white/40">&apos;, &apos;</span>
+        <span className="text-[#00ff6a]">Solidity</span>
+        <span className="text-white/40">&apos;,</span>
+      </span>
+    ),
+  },
+  {
+    lineNum: 8,
+    jsx: (
+      <span className="pl-10 inline-block">
+        <span className="text-white/40">&apos;</span>
+        <span className="text-[#00ff6a]">Web3</span>
+        <span className="text-white/40">&apos;, &apos;</span>
+        <span className="text-[#00ff6a]">TypeScript</span>
+        <span className="text-white/40">&apos;, &apos;</span>
+        <span className="text-[#00ff6a]">Docker</span>
+        <span className="text-white/40">&apos;</span>
+      </span>
+    ),
+  },
+  {
+    lineNum: 9,
+    jsx: (
+      <span className="pl-5 inline-block">
+        <span className="text-white/40">{"],"}</span>
+      </span>
+    ),
+  },
+  {
+    lineNum: 10,
+    jsx: (
+      <span className="pl-5 inline-block">
+        <span className="text-[#f8f8f2]">passion: </span>
+        <span className="text-white/40">&apos;</span>
+        <span className="text-[#00ff6a]">Blockchain & DeFi</span>
+        <span className="text-white/40">&apos;,</span>
+      </span>
+    ),
+  },
+  {
+    lineNum: 11,
+    jsx: <span className="text-white/40">{"}"}</span>,
+  },
+  {
+    lineNum: 12,
+    jsx: <span className="text-white/40">{";"}</span>,
+  },
+]
+
+const HeroCodeCard = () => (
+  <div
+    className="relative glass-card overflow-hidden group transition-all duration-300
+      hover:border-emerald-500/30 hover:shadow-[0_0_30px_rgba(0,255,106,0.12)]"
+    style={{ background: "rgba(2,11,6,0.7)" }}
+  >
+    {/* Matrix rain inside card */}
+    <div className="absolute inset-0 overflow-hidden rounded-[16px]">
+      <MatrixRain opacity={0.03} />
     </div>
-  )
-}
 
+    {/* Window chrome */}
+    <div className="relative z-10 flex items-center justify-between px-4 py-3 bg-white/[0.02] border-b border-white/[0.06]">
+      {/* Traffic lights */}
+      <div className="flex items-center gap-2">
+        <div className="w-3 h-3 rounded-full" style={{ background: "#ff5f56" }} />
+        <div className="w-3 h-3 rounded-full" style={{ background: "#ffbd2e" }} />
+        <div className="w-3 h-3 rounded-full" style={{ background: "#27c93f" }} />
+      </div>
+
+      {/* File tabs */}
+      <div className="flex items-center gap-1 text-xs font-mono">
+        <div className="flex items-center gap-1.5 px-3 py-1 rounded-t bg-white/[0.06] border border-white/10 border-b-0 text-white/70">
+          <span className="w-2 h-2 rounded-sm bg-[#3178c6] inline-block" />
+          coder.ts
+        </div>
+        <div className="flex items-center gap-1.5 px-3 py-1 text-white/25">
+          portfolio.ts
+        </div>
+      </div>
+
+      {/* Filename label */}
+      <span className="text-white/30 text-xs font-mono">coder.ts</span>
+    </div>
+
+    {/* Code content */}
+    <div className="relative z-10 flex px-4 py-4 font-mono text-sm">
+      {/* Line numbers */}
+      <div className="flex flex-col items-end pr-4 text-white/20 select-none text-xs leading-relaxed shrink-0">
+        {CODE_LINES.map(({ lineNum }) => (
+          <span key={lineNum} className="leading-[1.7]">{lineNum}</span>
+        ))}
+        <span className="leading-[1.7]">13</span>
+      </div>
+
+      {/* Code */}
+      <code className="flex flex-col text-xs sm:text-sm leading-[1.7] overflow-x-auto">
+        {CODE_LINES.map(({ lineNum, jsx }) => (
+          <div key={lineNum}>{jsx}</div>
+        ))}
+        {/* Blinking cursor */}
+        <div>
+          <span className="text-[#00ff6a] animate-blink-cursor">▋</span>
+        </div>
+      </code>
+    </div>
+
+    {/* Status bar */}
+    <div className="relative z-10 flex justify-between items-center px-4 py-1 bg-white/[0.025] border-t border-white/[0.06] text-white/20 text-[10px] font-mono">
+      <span className="flex items-center gap-1.5">
+        <span className="w-2 h-2 rounded-sm bg-[#3178c6] inline-block" />
+        TypeScript
+      </span>
+      <span>UTF-8</span>
+      <span>Ln 12, Col 3</span>
+    </div>
+  </div>
+)
+
+// ─── AvatarRing ───────────────────────────────────────────────────────────────
+const AvatarRing = () => (
+  <div className="relative w-20 h-20 mx-auto mb-4">
+    {/* Rotating gradient ring */}
+    <div
+      className="absolute inset-0 rounded-full animate-spin-slow"
+      style={{
+        background: "conic-gradient(from 0deg, #00ff6a, #00c87a, #007a40, #00ff6a)",
+        padding: "2px",
+        borderRadius: "50%",
+      }}
+    >
+      <div
+        className="w-full h-full rounded-full"
+        style={{ background: "#020b06" }}
+      />
+    </div>
+    {/* Avatar */}
+    <div className="absolute inset-[3px] rounded-full overflow-hidden">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/avatar.png"
+        alt="Omar Ajimi"
+        className="w-full h-full object-cover"
+      />
+    </div>
+  </div>
+)
+
+// ─── Portfolio (default export) ───────────────────────────────────────────────
 const Portfolio = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [showContent, setShowContent] = useState(false)
 
   const handleLoadingComplete = () => {
     setIsLoading(false)
-    setTimeout(() => setShowContent(true), 300)
+    setTimeout(() => setShowContent(true), 100)
   }
 
   return (
-    <div className="min-h-screen w-full relative">
+    <div className="w-full relative">
+      {/* Loading screen */}
       {isLoading && (
-        <div
-          className={`fixed inset-0 z-[9999] transition-opacity duration-500 ${
-            isLoading ? "opacity-100" : "opacity-0"
-          }`}
-        >
-          <LoadingScreen onLoadingComplete={handleLoadingComplete} />
-        </div>
+        <LoadingScreen onLoadingComplete={handleLoadingComplete} />
       )}
-      <div className={`transition-opacity duration-500 ${showContent ? "opacity-100" : "opacity-0"}`}>
+
+      {/* Main content */}
+      <div className="transition-opacity duration-700" style={{ opacity: showContent ? 1 : 0 }}>
         <Navbar />
-        <div className="min-h-screen w-full relative flex items-center justify-center font-sans p-4 sm:p-6 lg:p-8 pt-24">
-          <div className="container mx-auto max-w-7xl relative z-10">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 xl:gap-16 items-center">
-              <div className="flex flex-col gap-4 sm:gap-6 items-start text-left order-2 lg:order-1 animate-fade-in-up">
-                <div className="inline-flex items-center gap-2 px-3 py-1 bg-gray-900/80 dark:bg-white/10 border border-gray-700 dark:border-gray-600 rounded-full text-xs sm:text-sm text-gray-200 dark:text-gray-300 backdrop-blur-sm hover:bg-gray-800 dark:hover:bg-white/20 transition-all duration-300">
-                  <DotIcon />
-                  Welcome to my universe
-                </div>
-                <div className="relative">
-                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-bold leading-tight text-gray-900 dark:text-white">
-                    Hello <br />
-                    I&apos;m{" "}
-                    <span className="bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
-                      Omar Ajimi
-                    </span>
-                  </h1>
-                </div>
-                <div className="flex flex-wrap gap-2 sm:gap-3 my-2 sm:my-4">
-                  <span className="px-3 sm:px-4 py-1 sm:py-2 bg-gray-900/80 dark:bg-white/10 border border-gray-700 dark:border-gray-600 rounded-full text-gray-200 dark:text-gray-300 text-sm sm:text-base backdrop-blur-sm hover:bg-gray-800 dark:hover:bg-white/20 transition-all duration-300 cursor-default">
-                     MERN Stack
-                  </span>
-                  <span className="px-3 sm:px-4 py-1 sm:py-2 bg-gray-900/80 dark:bg-white/10 border border-gray-700 dark:border-gray-600 rounded-full text-gray-200 dark:text-gray-300 text-sm sm:text-base backdrop-blur-sm hover:bg-gray-800 dark:hover:bg-white/20 transition-all duration-300 cursor-default">
-                    Clean Code
-                  </span>
-                  <span className="px-3 sm:px-4 py-1 sm:py-2 bg-gray-900/80 dark:bg-white/10 border border-gray-700 dark:border-gray-600 rounded-full text-gray-200 dark:text-gray-300 text-sm sm:text-base backdrop-blur-sm hover:bg-gray-800 dark:hover:bg-white/20 transition-all duration-300 cursor-default">
-                    Innovation
-                  </span>
-                </div>
-                <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg lg:text-xl max-w-lg leading-relaxed">
-                  JavaScript lover 🖋️ | Blockchain enthusiast ⚡ | Crafting frameworks and coding the future ✨
-                </p>
-                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-4 sm:mt-6 w-full sm:w-auto">
-                  <LoadingButton
-                    variant="primary"
-                    onClick={async () => {
-                      await new Promise((resolve) => setTimeout(resolve, 2000))
-                      console.log("Learn More clicked!")
-                    }}
-                    loadingText="Loading..."
-                  >
-                    Learn More
-                  </LoadingButton>
-                  <LoadingButton
-                    variant="secondary"
-                    onClick={async () => {
-                      await new Promise((resolve) => setTimeout(resolve, 1500))
-                      const link = document.createElement("a")
-                      link.href = "/Omar_Ajimi_Resume.pdf"
-                      link.download = "resume.pdf"
-                      document.body.appendChild(link)
-                      link.click()
-                      document.body.removeChild(link)
-                      console.log("Resume downloaded!")
-                    }}
-                    loadingText="Downloading..."
-                  >
-                    Get Resume
-                  </LoadingButton>
-                </div>
-              </div>
-              <div className="order-1 lg:order-2 animate-fade-in-up">
-                <CoderProfileCard />
-              </div>
-            </div>
+
+        {/* Hero snap section */}
+        <section id="hero" className="snap-section relative">
+          {/* Aurora background */}
+          <AuroraBackground section="hero" className="absolute inset-0 z-0" />
+
+          {/* Content grid */}
+          <div className="relative z-10 container mx-auto max-w-7xl px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center h-screen pt-20">
+            {/* ── LEFT COLUMN ── */}
+            <motion.div
+              className="order-2 lg:order-1 flex flex-col gap-5"
+              variants={containerVariants}
+              initial="hidden"
+              animate={showContent ? "visible" : "hidden"}
+            >
+              {/* Available badge */}
+              <motion.div variants={itemVariants}>
+                <span className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-3 py-1 text-xs text-[#00ff6a]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#00ff6a] animate-pulse" />
+                  Available for work
+                </span>
+              </motion.div>
+
+              {/* Name */}
+              <motion.h1
+                variants={itemVariants}
+                className="font-extrabold text-5xl sm:text-6xl xl:text-7xl text-white leading-none tracking-tight"
+                style={{ fontFamily: "var(--font-syne)" }}
+              >
+                <span className="block">OMAR</span>
+                <span className="block text-aurora">AJIMI</span>
+              </motion.h1>
+
+              {/* Role line */}
+              <motion.p
+                variants={itemVariants}
+                className="font-mono text-sm text-[#00c87a] tracking-widest uppercase"
+              >
+                Full-Stack Developer · Blockchain · Web3
+              </motion.p>
+
+              {/* Bio */}
+              <motion.p
+                variants={itemVariants}
+                className="text-white/50 text-base max-w-sm"
+              >
+                JavaScript lover. Blockchain enthusiast. Crafting the decentralized future.
+              </motion.p>
+
+              {/* Skills */}
+              <motion.div variants={itemVariants}>
+                <SkillPills />
+              </motion.div>
+
+              {/* CTA buttons */}
+              <motion.div
+                variants={itemVariants}
+                className="flex flex-wrap gap-4 mt-2"
+              >
+                {/* Primary — Resume */}
+                <a
+                  href="/Omar_Ajimi_Resume.pdf"
+                  download
+                  className="relative overflow-hidden flex items-center gap-2 px-6 py-3 rounded-xl font-semibold
+                    bg-emerald-500/10 border border-emerald-500/30 text-[#00ff6a]
+                    hover:bg-emerald-500/20 hover:border-emerald-500/60
+                    hover:shadow-[0_0_20px_rgba(0,255,106,0.3)]
+                    transition-all duration-200"
+                >
+                  <Download size={15} />
+                  Get Resume
+                </a>
+
+                {/* Secondary — Projects */}
+                <button
+                  onClick={() => {
+                    const pathname = typeof window !== 'undefined' ? window.location.pathname : '/';
+                    if (pathname === "/portfolio") {
+                      const main = document.querySelector('main') as HTMLElement | null;
+                      const el = document.getElementById("projects");
+                      if (el && main) main.scrollTo({ top: el.offsetTop, behavior: 'smooth' });
+                    } else {
+                      window.location.href = "/portfolio#projects";
+                    }
+                  }}
+                  className="flex items-center gap-2 px-6 py-3 rounded-xl text-white/60
+                    border border-white/10 hover:border-white/30 hover:text-white
+                    transition-all duration-200"
+                >
+                  View Projects
+                  <ArrowRight size={15} />
+                </button>
+              </motion.div>
+
+              {/* Social links */}
+              <motion.div variants={itemVariants} className="flex items-center gap-4">
+                <a
+                  href="https://github.com/Omar-411"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white/30 hover:text-[#00ff6a] transition-colors duration-200"
+                  aria-label="GitHub"
+                >
+                  <Github size={20} />
+                </a>
+                <a
+                  href="https://www.linkedin.com/in/omar-ajimi-7a5341118"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white/30 hover:text-[#00ff6a] transition-colors duration-200"
+                  aria-label="LinkedIn"
+                >
+                  <Linkedin size={20} />
+                </a>
+              </motion.div>
+            </motion.div>
+
+            {/* ── RIGHT COLUMN ── */}
+            <motion.div
+              className="order-1 lg:order-2 flex flex-col"
+              initial={{ opacity: 0, y: 20 }}
+              animate={showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <AvatarRing />
+              <HeroCodeCard />
+            </motion.div>
           </div>
-        </div>
+        </section>
       </div>
     </div>
   )
 }
 
 export default Portfolio
-
-// Add custom CSS for animations
-const styles = `
-  @keyframes fade-in-up {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  .animate-fade-in-up {
-    animation: fade-in-up 0.6s ease-out forwards;
-  }
-  @keyframes typing {
-    0% {
-      opacity: 0;
-      transform: translateX(-10px);
-    }
-    50% {
-      opacity: 1;
-      transform: translateX(0);
-    }
-    100% {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-  .animate-typing {
-    opacity: 0;
-    animation: typing 0.5s ease-out forwards;
-  }
-  .hover\\:shadow-3xl:hover {
-    box-shadow: 0 35px 60px -12px rgba(0, 0, 0, 0.25);
-  }
-`
-
-if (typeof document !== "undefined") {
-  const styleSheet = document.createElement("style")
-  styleSheet.textContent = styles
-  document.head.appendChild(styleSheet)
-}

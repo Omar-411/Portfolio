@@ -1,81 +1,103 @@
 "use client"
+
 import { useEffect, useState } from "react"
-import Loader from "./loader"
+import MatrixRain from "./matrix-rain"
 
 interface LoadingScreenProps {
   onLoadingComplete: () => void
 }
 
+const FULL_NAME = "omar ajimi"
+
 const LoadingScreen = ({ onLoadingComplete }: LoadingScreenProps) => {
   const [progress, setProgress] = useState(0)
+  const [typedText, setTypedText] = useState("")
+  const [showWipe, setShowWipe] = useState(false)
 
+  // Progress timer — 0→100 over 2500ms (50ms tick)
   useEffect(() => {
-    const duration = 3000 // 3 seconds
-    const interval = 50 // Update every 50ms
+    const duration = 2500
+    const interval = 50
     const increment = (interval / duration) * 100
 
     const progressTimer = setInterval(() => {
       setProgress((prev) => {
-        const newProgress = prev + increment
-        if (newProgress >= 100) {
-          clearInterval(progressTimer)
-          setTimeout(onLoadingComplete, 200) // Small delay for smooth transition
-          return 100
-        }
-        return newProgress
+        const next = Math.min(prev + increment, 100)
+        return next
       })
     }, interval)
 
     return () => clearInterval(progressTimer)
-  }, [onLoadingComplete])
+  }, [])
+
+  // Sync typed text to progress
+  useEffect(() => {
+    const charCount = Math.round((progress / 100) * FULL_NAME.length)
+    setTypedText(FULL_NAME.substring(0, charCount))
+  }, [progress])
+
+  // Trigger wipe when progress hits 100
+  useEffect(() => {
+    if (progress < 100) return
+
+    const wipeTimer = setTimeout(() => {
+      setShowWipe(true)
+      // Call onLoadingComplete after the wipe animation finishes (600ms)
+      setTimeout(onLoadingComplete, 600)
+    }, 300)
+
+    return () => clearTimeout(wipeTimer)
+  }, [progress, onLoadingComplete])
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center">
-      {/* Background with same gradient as main page */}
-      <div
-        className="absolute inset-0 dark:hidden"
-        style={{
-          background: "radial-gradient(125% 125% at 50% 100%, #ffffff 40%, #3b82f6 100%)",
-        }}
-      />
-      <div
-        className="absolute inset-0 hidden dark:block"
-        style={{
-          background: "radial-gradient(125% 125% at 50% 100%, #000000 40%, #010133 100%)",
-        }}
-      />
+    <div className="fixed inset-0 z-[9999] bg-[#020b06] flex items-center justify-center overflow-hidden">
+      {/* Matrix rain background */}
+      <div className="absolute inset-0">
+        <MatrixRain opacity={0.04} />
+      </div>
 
-      {/* Loading Content */}
-      <div className="relative z-10 flex flex-col items-center gap-8">
-        {/* Logo/Brand */}
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 rounded-full flex items-center justify-center shadow-lg">
-            <span className="text-white font-bold text-xl">OA</span>
-          </div>
-          <div className="text-2xl font-bold text-gray-900 dark:text-white">Omar Ajimi</div>
+      {/* Center content */}
+      <div className="relative z-10 flex flex-col items-center gap-6">
+        {/* OA Monogram */}
+        <div
+          className="w-16 h-16 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600
+            flex items-center justify-center text-white font-bold text-2xl
+            animate-scale-in shadow-[0_0_40px_rgba(0,255,106,0.35)]"
+          style={{ fontFamily: "var(--font-syne)" }}
+        >
+          OA
         </div>
 
-        {/* Loading Animation */}
-        <div className="flex flex-col items-center gap-4">
-          <Loader size={32} className="text-blue-600 dark:text-blue-400" />
-          <div className="text-gray-600 dark:text-gray-300 text-lg font-medium animate-pulse">Loading Portfolio...</div>
+        {/* Typed name + blinking cursor */}
+        <div
+          className="text-[#00ff6a] text-xl tracking-[0.3em] uppercase min-h-[1.75rem]"
+          style={{ fontFamily: "var(--font-jetbrains)" }}
+        >
+          {typedText}
+          <span className="animate-blink-cursor">|</span>
         </div>
 
-        {/* Progress Bar */}
-        <div className="w-64 h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+        {/* Progress bar */}
+        <div className="w-64 h-[2px] bg-white/10 rounded-full overflow-hidden">
           <div
-            className="h-full bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 rounded-full transition-all duration-100 ease-out"
+            className="h-full bg-gradient-to-r from-emerald-400 to-teal-500 transition-all duration-100 rounded-full"
             style={{ width: `${progress}%` }}
           />
         </div>
 
-        {/* Progress Percentage */}
-        <div className="text-sm text-gray-500 dark:text-gray-400 font-mono">{Math.round(progress)}%</div>
+        {/* Progress percentage */}
+        <span className="text-xs text-white/30 font-mono">
+          {Math.round(progress)}%
+        </span>
       </div>
 
-      {/* Decorative Elements */}
-      <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-blue-600 rounded-full opacity-10 filter blur-3xl animate-pulse" />
-      <div className="absolute bottom-1/4 right-1/4 w-32 h-32 bg-purple-600 rounded-full opacity-10 filter blur-3xl animate-pulse" />
+      {/* Split-wipe exit panels */}
+      {showWipe && (
+        <>
+          <div className="fixed top-0 left-0 right-0 h-1/2 bg-[#020b06] z-[10000] animate-wipe-up" />
+          <div className="fixed bottom-0 left-0 right-0 h-1/2 bg-[#020b06] z-[10000] animate-wipe-down" />
+        </>
+      )}
     </div>
   )
 }
