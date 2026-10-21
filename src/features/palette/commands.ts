@@ -42,7 +42,7 @@ export const COMMAND_NAMES = [
   "skills",
   "services",
   "contact",
-  "notes",
+  "lab",
   "resume",
   "github",
   "linkedin",
@@ -95,9 +95,9 @@ export function runCommand(
   switch (name) {
     case "help":
       return { lines: helpLines(t) };
-    case "notes":
-      actions.goToPath(`/${locale}/notes`);
-      return { lines: [format(t.opening, { target: "notes" })], closeAfterMs: NAVIGATE_CLOSE_MS };
+    case "lab":
+      actions.goToPath(`/${locale}/lab`);
+      return { lines: [format(t.opening, { target: "lab" })], closeAfterMs: NAVIGATE_CLOSE_MS };
     case "resume":
       actions.download(profile.resume);
       return { lines: [format(t.opening, { target: "resume" })] };

@@ -5,8 +5,10 @@ import { m } from "framer-motion";
 import { Blocks, CalendarCheck, Code2, ExternalLink, Server } from "lucide-react";
 import BookingDialog from "@/features/booking/booking-dialog";
 import type { Web3Proof } from "@/content/web3";
+import type { Activity } from "@/lib/github";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
+import NowActivity from "./now-activity";
 
 const ICONS = [Code2, Blocks, Server] as const;
 
@@ -15,11 +17,12 @@ interface ServicesProps {
   t: Dictionary["services"];
   bookingUrl: string | null;
   proof: Web3Proof;
+  activity: Activity[];
 }
 
 const shorten = (address: string) => (address.length > 14 ? `${address.slice(0, 8)}…${address.slice(-6)}` : address);
 
-export default function Services({ locale, t, bookingUrl, proof }: ServicesProps) {
+export default function Services({ locale, t, bookingUrl, proof, activity }: ServicesProps) {
   const hasProof = proof.ens !== null || proof.contracts.length > 0;
   const [bookingOpen, setBookingOpen] = useState(false);
   const ctaClass =
@@ -102,6 +105,8 @@ export default function Services({ locale, t, bookingUrl, proof }: ServicesProps
             </ul>
           </div>
         )}
+
+        <NowActivity title={t.nowTitle} locale={locale} activity={activity} />
       </div>
 
       {bookingOpen && <BookingDialog locale={locale} t={t.booking} onClose={() => setBookingOpen(false)} />}

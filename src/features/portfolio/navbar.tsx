@@ -38,7 +38,7 @@ export default function Navbar({ locale, t }: NavbarProps) {
 
   const portfolioPath = `/${locale}/portfolio`;
   const onPortfolio = pathname === portfolioPath;
-  const onNotes = pathname.startsWith(`/${locale}/notes`);
+  const onLab = pathname.startsWith(`/${locale}/lab`);
   const hrefFor = (id: string) => (onPortfolio ? `#${id}` : `${portfolioPath}#${id}`);
 
   // A section is "active" while it crosses the middle line of the scroll container.
@@ -92,8 +92,8 @@ export default function Navbar({ locale, t }: NavbarProps) {
               {t[key]}
             </Link>
           ))}
-          <Link href={`/${locale}/notes`} className={pillClass(onNotes)}>
-            {t.notes}
+          <Link href={`/${locale}/lab`} className={pillClass(onLab)}>
+            {t.lab}
           </Link>
         </div>
 
@@ -152,11 +152,11 @@ export default function Navbar({ locale, t }: NavbarProps) {
             </Link>
           ))}
           <Link
-            href={`/${locale}/notes`}
+            href={`/${locale}/lab`}
             onClick={() => setMenuOpen(false)}
             className="font-display text-3xl font-bold text-white/70 transition-colors duration-200 hover:text-neon"
           >
-            {t.notes}
+            {t.lab}
           </Link>
         </div>
       )}

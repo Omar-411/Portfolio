@@ -14,6 +14,7 @@ import Services from "@/features/portfolio/services/services";
 import Skills from "@/features/portfolio/skills/skills";
 import { isLocale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
+import { fetchRecentActivity } from "@/lib/github";
 import { bookingUrl, siteUrl } from "@/lib/site";
 
 type PageProps = { params: Promise<{ lang: string }> };
@@ -28,6 +29,7 @@ export default async function PortfolioPage({ params }: PageProps) {
   const { lang } = await params;
   if (!isLocale(lang)) notFound();
   const dictionary = getDictionary(lang);
+  const activity = await fetchRecentActivity(profile.githubUser);
 
   const person = {
     "@context": "https://schema.org",
@@ -51,7 +53,7 @@ export default async function PortfolioPage({ params }: PageProps) {
         <Experience t={dictionary.experience} />
         <Projects locale={lang} t={dictionary.projects} />
         <Skills locale={lang} t={dictionary.skills} />
-        <Services locale={lang} t={dictionary.services} bookingUrl={bookingUrl} proof={web3Proof} />
+        <Services locale={lang} t={dictionary.services} bookingUrl={bookingUrl} proof={web3Proof} activity={activity} />
         <Contact t={dictionary.contact} />
       </main>
     </>

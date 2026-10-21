@@ -1,6 +1,5 @@
 import type { MetadataRoute } from "next";
 import { caseStudies } from "@/content/case-studies";
-import { notes } from "@/content/notes";
 import { locales } from "@/i18n/config";
 import { siteUrl } from "@/lib/site";
 
@@ -9,8 +8,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const paths = [
     "/portfolio",
     ...caseStudies.map(({ slug }) => `/projects/${slug}`),
-    "/notes",
-    ...notes.map(({ slug }) => `/notes/${slug}`),
+    "/lab",
   ];
 
   return locales.flatMap((locale) =>
