@@ -5,6 +5,8 @@ import { m } from "framer-motion";
 import { Github, Linkedin, Mail, Send } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { profile } from "@/content/profile";
+import { format } from "@/i18n/config";
+import type { Dictionary } from "@/i18n/get-dictionary";
 
 type Status = "idle" | "sending" | "success" | "error";
 
@@ -18,17 +20,17 @@ const fieldClass =
 const socialClass =
   "flex items-center gap-2 text-sm text-white/30 transition-colors duration-200 hover:text-neon";
 
-async function sendMessage(form: HTMLFormElement): Promise<boolean> {
+async function sendMessage(form: HTMLFormElement, subject: string): Promise<boolean> {
   const body = new FormData(form);
   body.append("_captcha", "false");
-  body.append("_subject", "New message from portfolio");
+  body.append("_subject", subject);
   body.append("_template", "table");
 
   const response = await fetch(ENDPOINT, { method: "POST", body, headers: { Accept: "application/json" } });
   return response.ok;
 }
 
-export default function Contact() {
+export default function Contact({ t }: { t: Dictionary["contact"] }) {
   const [status, setStatus] = useState<Status>("idle");
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -37,7 +39,7 @@ export default function Contact() {
     setStatus("sending");
 
     try {
-      const ok = await sendMessage(form);
+      const ok = await sendMessage(form, t.subject);
       if (ok) form.reset();
       setStatus(ok ? "success" : "error");
     } catch {
@@ -51,15 +53,15 @@ export default function Contact() {
     <section id="contact" className="snap-section flex items-center justify-center">
       <div className="relative z-10 mx-auto flex w-full max-w-2xl flex-col items-center gap-8 px-6 py-20 text-center">
         <div className="flex flex-col items-center gap-3">
-          <p className="font-mono text-xs uppercase tracking-widest text-neon-soft">{"/ / contact"}</p>
-          <h2 className="font-display text-5xl font-extrabold leading-tight text-white md:text-6xl">
-            LET&apos;S BUILD
+          <p className="font-mono text-xs uppercase tracking-widest text-neon-soft">{t.eyebrow}</p>
+          <h2 className="font-display text-[2.5rem] sm:text-5xl font-extrabold leading-tight text-white md:text-6xl">
+            {t.titleLines[0]}
             <br />
-            <span className="text-aurora">SOMETHING</span>
+            <span className="text-aurora">{t.titleLines[1]}</span>
             <br />
-            GREAT
+            {t.titleLines[2]}
           </h2>
-          <p className="mt-2 text-base text-white/50">Open to freelance, collaborations, and full-time roles.</p>
+          <p className="mt-2 text-base text-white/50">{t.subtitle}</p>
         </div>
 
         <m.div
@@ -85,18 +87,18 @@ export default function Contact() {
 
             <div className="flex flex-col gap-4 sm:flex-row">
               <div className="w-full">
-                <label htmlFor="contact-name" className="sr-only">Your name</label>
-                <input id="contact-name" type="text" name="name" required placeholder="Your name" disabled={sending} className={fieldClass} />
+                <label htmlFor="contact-name" className="sr-only">{t.name}</label>
+                <input id="contact-name" type="text" name="name" required placeholder={t.name} disabled={sending} className={fieldClass} />
               </div>
               <div className="w-full">
-                <label htmlFor="contact-email" className="sr-only">Your email</label>
-                <input id="contact-email" type="email" name="email" required placeholder="Your email" disabled={sending} className={fieldClass} />
+                <label htmlFor="contact-email" className="sr-only">{t.email}</label>
+                <input id="contact-email" type="email" name="email" required placeholder={t.email} disabled={sending} className={fieldClass} />
               </div>
             </div>
 
             <div>
-              <label htmlFor="contact-message" className="sr-only">Your message</label>
-              <textarea id="contact-message" name="message" required rows={4} placeholder="Your message..." disabled={sending} className={cn(fieldClass, "resize-none")} />
+              <label htmlFor="contact-message" className="sr-only">{t.message}</label>
+              <textarea id="contact-message" name="message" required rows={4} placeholder={t.message} disabled={sending} className={cn(fieldClass, "resize-none")} />
             </div>
 
             <button
@@ -105,7 +107,7 @@ export default function Contact() {
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 py-3 text-sm font-semibold text-white transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(0,255,106,0.4)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
             >
               <Send size={15} />
-              {sending ? "Sending…" : "Send Message"}
+              {sending ? t.sending : t.send}
             </button>
 
             <p
@@ -116,8 +118,8 @@ export default function Contact() {
                 status === "error" && "text-red-400"
               )}
             >
-              {status === "success" && "Message sent! I'll get back to you soon."}
-              {status === "error" && `Something went wrong. Please try again or email ${profile.email}.`}
+              {status === "success" && t.success}
+              {status === "error" && format(t.error, { email: profile.email })}
             </p>
           </form>
         </m.div>

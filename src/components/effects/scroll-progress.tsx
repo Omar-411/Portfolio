@@ -2,24 +2,27 @@
 
 import { useEffect, useRef } from "react";
 
-/** Thin progress bar for the page's scroll container (<main>). */
+/** Thin progress bar. Follows the `[data-scroll-container]` element if the page has one, else the window. */
 export default function ScrollProgress() {
   const barRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const main = document.querySelector("main");
     const bar = barRef.current;
-    if (!main || !bar) return;
+    if (!bar) return;
+
+    const container = document.querySelector<HTMLElement>("[data-scroll-container]");
+    const scroller = container ?? document.documentElement;
+    const eventTarget: HTMLElement | Window = container ?? window;
 
     const update = () => {
-      const max = main.scrollHeight - main.clientHeight;
-      const ratio = max > 0 ? main.scrollTop / max : 0;
+      const max = scroller.scrollHeight - scroller.clientHeight;
+      const ratio = max > 0 ? scroller.scrollTop / max : 0;
       bar.style.transform = `scaleX(${Math.min(1, Math.max(0, ratio))})`;
     };
 
     update();
-    main.addEventListener("scroll", update, { passive: true });
-    return () => main.removeEventListener("scroll", update);
+    eventTarget.addEventListener("scroll", update, { passive: true });
+    return () => eventTarget.removeEventListener("scroll", update);
   }, []);
 
   return (

@@ -2,9 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight, ExternalLink, Github, Star } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, ChevronLeft, ChevronRight, ExternalLink, Github, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { profile } from "@/content/profile";
+import { format, type Locale } from "@/i18n/config";
+import type { Dictionary } from "@/i18n/get-dictionary";
 import type { ProjectCard } from "./types";
 
 const LANGUAGE_STYLES: Record<string, string> = {
@@ -23,7 +26,13 @@ const FALLBACK_LANGUAGE_STYLE = "border-emerald-500/30 text-emerald-400";
 const arrowClass =
   "flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border border-neon/15 bg-neon/5 text-white/60 backdrop-blur-xl transition-all duration-200 hover:border-emerald-500/40 hover:text-neon disabled:cursor-not-allowed disabled:opacity-20";
 
-export default function ProjectCarousel({ projects }: { projects: ProjectCard[] }) {
+interface ProjectCarouselProps {
+  projects: ProjectCard[];
+  locale: Locale;
+  t: Dictionary["projects"];
+}
+
+export default function ProjectCarousel({ projects, locale, t }: ProjectCarouselProps) {
   const trackRef = useRef<HTMLUListElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -53,8 +62,8 @@ export default function ProjectCarousel({ projects }: { projects: ProjectCard[] 
     <section id="projects" className="snap-section flex flex-col justify-center">
       <div className="container relative z-10 mx-auto flex max-w-7xl flex-col px-6 py-16">
         <div className="mb-10">
-          <p className="mb-2 font-mono text-xs uppercase tracking-widest text-neon-soft">{"/ / projects"}</p>
-          <h2 className="font-display text-4xl font-extrabold text-white md:text-5xl">MY WORK</h2>
+          <p className="mb-2 font-mono text-xs uppercase tracking-widest text-neon-soft">{t.eyebrow}</p>
+          <h2 className="font-display text-4xl font-extrabold text-white md:text-5xl">{t.title}</h2>
           <div className="mt-3 h-[2px] w-16 bg-gradient-to-r from-emerald-400 to-transparent" />
         </div>
 
@@ -63,7 +72,7 @@ export default function ProjectCarousel({ projects }: { projects: ProjectCard[] 
             type="button"
             onClick={() => scrollToIndex(activeIndex - 1)}
             disabled={activeIndex === 0}
-            aria-label="Previous project"
+            aria-label={t.previous}
             className={cn(arrowClass, "hidden sm:flex")}
           >
             <ChevronLeft size={18} />
@@ -71,7 +80,7 @@ export default function ProjectCarousel({ projects }: { projects: ProjectCard[] 
 
           <ul
             ref={trackRef}
-            aria-label="Featured projects"
+            aria-label={t.listLabel}
             className="scrollbar-hide flex flex-1 snap-x snap-mandatory gap-6 overflow-x-auto pb-4"
           >
             {projects.map((project) => (
@@ -129,17 +138,26 @@ export default function ProjectCarousel({ projects }: { projects: ProjectCard[] 
                       href={project.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      aria-label={`View ${project.title} on GitHub`}
+                      aria-label={format(t.viewOnGithub, { title: project.title })}
                       className="text-white/40 transition-colors duration-200 hover:text-neon"
                     >
                       <Github size={18} />
                     </a>
+                    {project.caseStudySlug && (
+                      <Link
+                        href={`/${locale}/projects/${project.caseStudySlug}`}
+                        className="inline-flex items-center gap-1 text-xs font-medium text-neon-soft transition-colors hover:text-neon"
+                      >
+                        {t.caseStudy}
+                        <ArrowRight size={12} aria-hidden="true" />
+                      </Link>
+                    )}
                     {project.homepage && (
                       <a
                         href={project.homepage}
                         target="_blank"
                         rel="noopener noreferrer"
-                        aria-label={`Live demo of ${project.title}`}
+                        aria-label={format(t.liveDemo, { title: project.title })}
                         className="text-white/40 transition-colors duration-200 hover:text-neon"
                       >
                         <ExternalLink size={18} />
@@ -155,7 +173,7 @@ export default function ProjectCarousel({ projects }: { projects: ProjectCard[] 
             type="button"
             onClick={() => scrollToIndex(activeIndex + 1)}
             disabled={activeIndex === projects.length - 1}
-            aria-label="Next project"
+            aria-label={t.next}
             className={cn(arrowClass, "hidden sm:flex")}
           >
             <ChevronRight size={18} />
@@ -168,7 +186,7 @@ export default function ProjectCarousel({ projects }: { projects: ProjectCard[] 
               key={project.repo}
               type="button"
               onClick={() => scrollToIndex(i)}
-              aria-label={`Go to ${project.title}`}
+              aria-label={format(t.goTo, { title: project.title })}
               className={cn(
                 "h-2 rounded-full transition-all duration-300",
                 i === activeIndex ? "w-5 bg-neon" : "w-2 bg-white/20 hover:bg-white/40"
@@ -185,7 +203,7 @@ export default function ProjectCarousel({ projects }: { projects: ProjectCard[] 
             className="inline-flex items-center gap-2 rounded-full border border-neon/20 bg-neon/[0.04] px-6 py-2.5 text-sm font-medium text-neon-soft backdrop-blur-xl transition-all duration-300 hover:border-emerald-500/50 hover:bg-neon/[0.08] hover:text-neon"
           >
             <Github size={15} />
-            View all on GitHub
+            {t.viewAll}
           </a>
         </div>
       </div>

@@ -7,4 +7,6 @@ export interface ProjectCard {
   language: string | null;
   stars: number;
   topics: string[];
+  /** Set when a case study exists for this project. */
+  caseStudySlug: string | null;
 }

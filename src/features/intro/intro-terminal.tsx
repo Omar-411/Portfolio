@@ -4,10 +4,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useReducedMotion } from "framer-motion";
 import SoundToggle from "@/components/sound-toggle";
+import { getPreferredLocale } from "@/i18n/client";
 import { playBoot, playKey, playSuccess, unlockAudio } from "@/lib/audio";
 
 const SEEN_KEY = "portfolio:intro-seen";
-const PORTFOLIO_PATH = "/portfolio";
 
 const BOOT_LINES = [
   "> initializing portfolio...",
@@ -31,6 +31,8 @@ for (const line of BOOT_LINES) {
   totalMs += line.length * CHAR_MS + LINE_GAP_MS;
 }
 const TYPING_TOTAL_MS = totalMs;
+
+const portfolioPath = () => `/${getPreferredLocale()}/portfolio`;
 
 type Phase = "checking" | "gate" | "booting" | "leaving";
 
@@ -63,7 +65,7 @@ export default function IntroTerminal() {
         // Not critical: the intro simply plays again on the next visit.
       }
       setPhase("leaving");
-      window.setTimeout(() => router.push(PORTFOLIO_PATH), reduceMotion ? 0 : EXIT_MS);
+      window.setTimeout(() => router.push(portfolioPath()), reduceMotion ? 0 : EXIT_MS);
     },
     [router, reduceMotion]
   );
@@ -83,10 +85,10 @@ export default function IntroTerminal() {
       seen = false;
     }
     if (seen) {
-      router.replace(PORTFOLIO_PATH);
+      router.replace(portfolioPath());
       return;
     }
-    router.prefetch(PORTFOLIO_PATH);
+    router.prefetch(portfolioPath());
     setPhase("gate");
   }, [router]);
 

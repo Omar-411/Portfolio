@@ -1,43 +1,41 @@
 # CLAUDE.md
 
-Guidance for Claude Code when working in this repository.
-
-## Project
-
-Personal portfolio for Omar Ajimi. Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS v4, Framer Motion. Dark-only design (no theme switcher).
+Personal portfolio for Omar Ajimi. Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS v4, framer-motion 12 (`LazyMotion strict`, `m.*` only). Package manager: **bun** (`bun.lock` is the only lockfile).
 
 ## Commands
 
-- `npm run dev` — dev server (Turbopack) at http://localhost:3000
-- `npm run build` — production build
-- `npm run start` — serve the production build
-- `npm run lint` — ESLint (flat config, `next/core-web-vitals` + `next/typescript`)
-
-No test suite is configured.
+- `bun dev` — dev server (Turbopack)
+- `bun run build` / `bun start` — production build / serve
+- `bun run lint` — ESLint flat config
+- `bunx tsc --noEmit` — type check
 
 ## Routes
 
-- `/` — boot-terminal intro (`features/intro`). Waits for ENTER/click (this unlocks audio), types a short boot log (~2s), then routes to `/portfolio`. ESC or "skip intro" leaves immediately. A `sessionStorage` flag makes repeat visits skip it.
-- `/portfolio` — single page of snapping sections: Hero, Projects, Skills, Contact. `<main>` is the scroll container (not `window`).
+- `/` — boot terminal (`src/app/(intro)`); "press ENTER to boot" gate unlocks audio, then routes to `/{locale}/portfolio`.
+- `/{en|fr}/portfolio` — one-page site: Hero, Experience, Projects, Skills, Services, Contact.
+- `/{lang}/projects/[slug]` — case study (content in `src/content/case-studies.ts`).
+- `/{lang}/notes`, `/{lang}/notes/[slug]` — short notes (`src/content/notes.ts`, English only).
+- `/portfolio` redirects to `/en/portfolio`. `sitemap.xml`, `robots.txt` and an Open Graph image are generated.
+- Two root layouts via route groups: `(intro)` and `[lang]`. `[lang]` uses `generateStaticParams` with `dynamicParams = false`.
 
 ## Architecture (dependencies point inward)
 
-- `src/content/` — plain data: profile, skills, featured projects. Edit copy here, not in components.
-- `src/lib/` — infrastructure helpers with no UI: `audio.ts` (Web Audio, one lazy context, must be unlocked from a user gesture), `github.ts` (repo fetch, returns `null` on failure), `utils.ts` (`cn`).
-- `src/components/` — shared UI: `effects/` (aurora background, single shared matrix-rain canvas, custom cursor, scroll progress) and `motion-provider.tsx` (`LazyMotion` strict + reduced-motion).
-- `src/features/` — feature code: `intro/` and `portfolio/{hero,projects,skills,contact}` plus `portfolio/navbar.tsx`.
-- `src/app/` — routing only (layout, pages, `globals.css`).
+- `src/content/` — pure data: profile, projects, skills, case studies, notes, web3 proof. User-facing text is `Localized<T>` (`{ en, fr }`).
+- `src/i18n/` — `config.ts` (locales, `Localized`, `format`), `dictionaries/{en,fr}.ts` (`fr` must satisfy `typeof en`), `client.ts` (remembered locale in localStorage `portfolio:lang`).
+- `src/features/portfolio/*` — one folder per section; sections receive `t` (dictionary slice) and `locale` as props.
+- `src/features/palette/` — terminal command palette (Ctrl/Cmd+K). `commands.ts` is pure (`runCommand`, `complete`); `command-palette.tsx` and `palette-provider.tsx` are the UI and wiring. Add a command in `commands.ts` plus its description in both dictionaries.
+- `src/features/intro/` — boot terminal.
+- `src/lib/audio.ts` — single lazy `AudioContext`, synthesized sounds (no samples), mute in localStorage `portfolio:muted`. `ui-sounds.tsx` delegates hover/click/typing sounds from the document.
+- `src/components/` — shared UI and effects. Scroll container on the one-page site is `[data-scroll-container]` (`.snap-container`); sub-pages scroll the window.
+
+## Content to fill in (left empty on purpose, never invent facts)
+
+- `src/content/case-studies.ts` — `problem`, `approach`, `results`, `stack`, `highlights` per project; empty sections are hidden.
+- `src/content/web3.ts` — `ens` and `contracts`; the proof strip is hidden until filled.
+- Env vars: see `.env.example` (`NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_BOOKING_URL`, `NEXT_PUBLIC_FORMSUBMIT_ALIAS`, `GITHUB_TOKEN`).
 
 ## Conventions
 
-- Animation: ambient loops are CSS (transform/opacity only); entrances and scroll reveals use Framer Motion's `m` components (never `motion`, `LazyMotion strict` will throw). Respect `prefers-reduced-motion`.
-- Tokens live in `@theme` in `globals.css` (`bg-void`, `text-neon`, `text-neon-soft`, `font-display`, `font-code`). Use them instead of hard-coded hex.
-- Sections use `.snap-section` (`min-height: 100dvh`); never clip them with `overflow: hidden`.
-- Projects show curated copy from `content/projects.ts`; GitHub data only adds language/stars/topics. If GitHub fails the card still renders, without invented data.
-- Use `cn()` for conditional classes.
-
-## Environment (see `.env.example`)
-
-- `GITHUB_TOKEN` — optional, raises the GitHub API rate limit.
-- `NEXT_PUBLIC_FORMSUBMIT_ALIAS` — optional FormSubmit alias so the real email isn't in the page source.
-- `NEXT_PUBLIC_SITE_URL` — optional, sets `metadataBase` for Open Graph URLs.
+- No tests configured. Verify with build, tsc, lint.
+- Use `cn()` from `src/lib/utils.ts` for conditional classes.
+- Comments explain "why" only.

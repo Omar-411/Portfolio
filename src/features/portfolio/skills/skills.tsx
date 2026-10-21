@@ -6,11 +6,18 @@ import { ArrowRight, ChevronLeft, ChevronRight, ExternalLink } from "lucide-reac
 import { cn } from "@/lib/utils";
 import { profile } from "@/content/profile";
 import { skillCategories } from "@/content/skills";
+import { format, type Locale } from "@/i18n/config";
+import type { Dictionary } from "@/i18n/get-dictionary";
 
 const arrowClass =
   "flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/60 transition-all duration-200 hover:border-emerald-500/40 hover:text-neon";
 
-export default function Skills() {
+interface SkillsProps {
+  locale: Locale;
+  t: Dictionary["skills"];
+}
+
+export default function Skills({ locale, t }: SkillsProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const category = skillCategories[activeIndex];
   const count = skillCategories.length;
@@ -27,14 +34,14 @@ export default function Skills() {
           viewport={{ once: true }}
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
-          <p className="mb-3 font-mono text-xs uppercase tracking-widest text-neon-soft">{"/ / tech stack"}</p>
-          <h2 className="mb-4 font-display text-4xl font-extrabold text-white md:text-5xl">MY TECH STACK</h2>
+          <p className="mb-3 font-mono text-xs uppercase tracking-widest text-neon-soft">{t.eyebrow}</p>
+          <h2 className="mb-4 font-display text-4xl font-extrabold text-white md:text-5xl">{t.title}</h2>
           <div className="mx-auto h-[2px] w-24 bg-gradient-to-r from-emerald-400 to-transparent" />
         </m.div>
 
         <div className="mx-auto max-w-4xl">
           <m.div
-            key={category.title}
+            key={category.title.en}
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
@@ -60,14 +67,14 @@ export default function Skills() {
                 >
                   {category.icon}
                 </div>
-                <h3 className="font-display text-2xl font-extrabold text-white md:text-3xl">{category.title}</h3>
+                <h3 className="font-display text-2xl font-extrabold text-white md:text-3xl">{category.title[locale]}</h3>
               </div>
 
               <div className="flex items-center gap-2">
-                <button type="button" onClick={() => goTo(-1)} className={arrowClass} aria-label="Previous category">
+                <button type="button" onClick={() => goTo(-1)} className={arrowClass} aria-label={t.previous}>
                   <ChevronLeft size={18} />
                 </button>
-                <button type="button" onClick={() => goTo(1)} className={arrowClass} aria-label="Next category">
+                <button type="button" onClick={() => goTo(1)} className={arrowClass} aria-label={t.next}>
                   <ChevronRight size={18} />
                 </button>
               </div>
@@ -116,10 +123,10 @@ export default function Skills() {
           <div className="mt-10 flex items-center justify-center gap-3">
             {skillCategories.map((item, i) => (
               <button
-                key={item.title}
+                key={item.title.en}
                 type="button"
                 onClick={() => setActiveIndex(i)}
-                aria-label={`View ${item.title} skills`}
+                aria-label={format(t.view, { title: item.title[locale] })}
                 aria-current={i === activeIndex}
                 className={cn(
                   "h-2.5 rounded-full transition-all duration-300",
@@ -132,7 +139,7 @@ export default function Skills() {
 
           <div className="mt-14 text-center">
             <p className="mx-auto mb-4 max-w-2xl text-sm text-white/50">
-              Always learning. Currently exploring Rust, Zero-Knowledge Proofs, and AI agents.
+              {t.footer}
             </p>
             <a
               href={profile.github}
@@ -141,7 +148,7 @@ export default function Skills() {
               className="inline-flex items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-6 py-3 font-semibold text-neon transition-all duration-200 hover:border-emerald-500/60 hover:bg-emerald-500/20 hover:shadow-[0_0_20px_rgba(0,255,106,0.3)]"
             >
               <ExternalLink size={15} />
-              View GitHub Profile
+              {t.githubProfile}
               <ArrowRight size={15} />
             </a>
           </div>

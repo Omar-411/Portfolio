@@ -1,10 +1,12 @@
+import type { Localized } from "@/i18n/config";
+
 export interface Skill {
   name: string;
   level: number;
 }
 
 export interface SkillCategory {
-  title: string;
+  title: Localized<string>;
   icon: string;
   color: string;
   skills: Skill[];
@@ -21,7 +23,7 @@ export const codeCardSkills = [
 
 export const skillCategories: SkillCategory[] = [
   {
-    title: "Frontend",
+    title: { en: "Frontend", fr: "Frontend" },
     icon: "⚛️",
     color: "#00ff6a",
     skills: [
@@ -33,7 +35,7 @@ export const skillCategories: SkillCategory[] = [
     ],
   },
   {
-    title: "Backend",
+    title: { en: "Backend", fr: "Backend" },
     icon: "🔧",
     color: "#00c87a",
     skills: [
@@ -45,7 +47,7 @@ export const skillCategories: SkillCategory[] = [
     ],
   },
   {
-    title: "Blockchain",
+    title: { en: "Blockchain", fr: "Blockchain" },
     icon: "⛓️",
     color: "#00a860",
     skills: [
@@ -57,7 +59,7 @@ export const skillCategories: SkillCategory[] = [
     ],
   },
   {
-    title: "Tools & Others",
+    title: { en: "Tools & Others", fr: "Outils & autres" },
     icon: "🛠️",
     color: "#00ff6a",
     skills: [

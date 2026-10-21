@@ -7,9 +7,16 @@ import { isMuted, playClick, setMuted, unlockAudio } from "@/lib/audio";
 interface SoundToggleProps {
   className?: string;
   size?: number;
+  muteLabel?: string;
+  unmuteLabel?: string;
 }
 
-export default function SoundToggle({ className, size = 16 }: SoundToggleProps) {
+export default function SoundToggle({
+  className,
+  size = 16,
+  muteLabel = "Mute sound",
+  unmuteLabel = "Unmute sound",
+}: SoundToggleProps) {
   const [muted, setMutedState] = useState(false);
 
   useEffect(() => setMutedState(isMuted()), []);
@@ -26,7 +33,7 @@ export default function SoundToggle({ className, size = 16 }: SoundToggleProps) 
     <button
       type="button"
       onClick={toggle}
-      aria-label={muted ? "Unmute sound" : "Mute sound"}
+      aria-label={muted ? unmuteLabel : muteLabel}
       aria-pressed={muted}
       data-sound="off"
       className={className}

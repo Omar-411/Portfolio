@@ -12,14 +12,16 @@
   --color-neon-deep: #007a40;
 }
 
-/* ── Layout: <main> is the scroll container with snapping sections ── */
-html,
-body {
-  height: 100%;
-  overflow-x: hidden;
+/* ── Layout: the portfolio page scrolls inside .snap-container (snapping sections) ── */
+html {
+  scroll-behavior: smooth;
 }
 
-main {
+body {
+  overflow-x: clip;
+}
+
+.snap-container {
   height: 100dvh;
   overflow-y: auto;
   scroll-behavior: smooth;
@@ -27,7 +29,7 @@ main {
 }
 
 @media (min-width: 1024px) and (min-height: 700px) {
-  main {
+  .snap-container {
     scroll-snap-type: y mandatory;
   }
 }
@@ -130,7 +132,8 @@ main {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  main {
+  html,
+  .snap-container {
     scroll-behavior: auto;
   }
 }
