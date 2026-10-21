@@ -31,16 +31,16 @@ export default async function LabPage({ params }: PageProps) {
       <p className="mt-4 text-white/55">{t.intro}</p>
 
       <div className="mt-10 grid gap-6 md:grid-cols-2">
-        <DemoCard id="wallet" title={t.wallet.title} description={t.wallet.description} sourceFile="wallet-lookup.tsx" viewCode={t.viewCode}>
+        <DemoCard id="wallet" title={t.wallet.title} description={t.wallet.description}>
           <WalletLookup t={t.wallet} />
         </DemoCard>
-        <DemoCard id="gas" title={t.gas.title} description={t.gas.description} sourceFile="gas-estimator.tsx" viewCode={t.viewCode}>
+        <DemoCard id="gas" title={t.gas.title} description={t.gas.description}>
           <GasEstimator t={t.gas} />
         </DemoCard>
-        <DemoCard id="sign" title={t.sign.title} description={t.sign.description} sourceFile="signature-playground.tsx" viewCode={t.viewCode}>
+        <DemoCard id="sign" title={t.sign.title} description={t.sign.description}>
           <SignaturePlayground t={t.sign} />
         </DemoCard>
-        <DemoCard id="typewriter" title={t.typewriter.title} description={t.typewriter.description} sourceFile="typewriter-toy.tsx" viewCode={t.viewCode}>
+        <DemoCard id="typewriter" title={t.typewriter.title} description={t.typewriter.description}>
           <TypewriterToy t={t.typewriter} />
         </DemoCard>
       </div>
