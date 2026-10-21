@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Github, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import SoundToggle from "@/components/sound-toggle";
 import { profile } from "@/content/profile";
 
 const NAV_ITEMS = [
@@ -75,6 +76,7 @@ export default function Navbar() {
           >
             <Github size={18} />
           </a>
+          <SoundToggle className="rounded-lg p-1.5 text-white/40 transition-colors duration-200 hover:text-neon" size={18} />
           <button
             type="button"
             onClick={() => setMenuOpen((open) => !open)}

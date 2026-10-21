@@ -81,3 +81,11 @@ export function playSuccess(): void {
   blip({ from: 660, duration: 0.14, volume: 0.12, type: "sine" });
   blip({ from: 990, duration: 0.22, volume: 0.12, type: "sine", delay: 0.12 });
 }
+
+export function playHover(): void {
+  blip({ from: 880, to: 1320, duration: 0.05, volume: 0.035, type: "sine" });
+}
+
+export function playClick(): void {
+  blip({ from: 620, to: 260, duration: 0.07, volume: 0.1, type: "triangle" });
+}

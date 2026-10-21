@@ -77,6 +77,7 @@ export default function ProjectCarousel({ projects }: { projects: ProjectCard[] 
             {projects.map((project) => (
               <li
                 key={project.repo}
+                data-sound
                 className="group glass-card w-[300px] flex-shrink-0 snap-start overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:border-emerald-500/40 hover:shadow-[0_0_40px_rgba(0,255,106,0.15)] sm:w-[320px]"
               >
                 <div className="relative h-40 overflow-hidden">

@@ -3,6 +3,7 @@ import AuroraBackground from "@/components/effects/aurora-background";
 import MatrixRain from "@/components/effects/matrix-rain";
 import ScrollProgress from "@/components/effects/scroll-progress";
 import MotionProvider from "@/components/motion-provider";
+import UiSounds from "@/components/ui-sounds";
 import Contact from "@/features/portfolio/contact/contact";
 import Hero from "@/features/portfolio/hero/hero";
 import Navbar from "@/features/portfolio/navbar";
@@ -19,6 +20,7 @@ export default function PortfolioPage() {
     <MotionProvider>
       <AuroraBackground />
       <MatrixRain />
+      <UiSounds />
       <ScrollProgress />
       <Navbar />
       <main className="relative z-10">

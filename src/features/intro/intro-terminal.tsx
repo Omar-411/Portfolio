@@ -3,8 +3,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useReducedMotion } from "framer-motion";
-import { Volume2, VolumeX } from "lucide-react";
-import { isMuted, playBoot, playKey, playSuccess, setMuted, unlockAudio } from "@/lib/audio";
+import SoundToggle from "@/components/sound-toggle";
+import { playBoot, playKey, playSuccess, unlockAudio } from "@/lib/audio";
 
 const SEEN_KEY = "portfolio:intro-seen";
 const PORTFOLIO_PATH = "/portfolio";
@@ -50,7 +50,6 @@ export default function IntroTerminal() {
   const reduceMotion = useReducedMotion();
   const [phase, setPhase] = useState<Phase>("checking");
   const [counts, setCounts] = useState<number[]>(emptyCounts);
-  const [muted, setMutedState] = useState(false);
   const leavingRef = useRef(false);
 
   const leave = useCallback(
@@ -88,7 +87,6 @@ export default function IntroTerminal() {
       return;
     }
     router.prefetch(PORTFOLIO_PATH);
-    setMutedState(isMuted());
     setPhase("gate");
   }, [router]);
 
@@ -149,12 +147,6 @@ export default function IntroTerminal() {
     return () => cancelAnimationFrame(frame);
   }, [phase, reduceMotion, leave]);
 
-  const toggleMuted = () => {
-    const next = !muted;
-    setMuted(next);
-    setMutedState(next);
-  };
-
   if (phase === "checking") {
     return <div className="fixed inset-0 bg-[#020b06]" aria-hidden="true" />;
   }
@@ -167,14 +159,7 @@ export default function IntroTerminal() {
         phase === "leaving" ? "opacity-0" : "opacity-100"
       }`}
     >
-      <button
-        type="button"
-        onClick={toggleMuted}
-        aria-label={muted ? "Unmute sound" : "Mute sound"}
-        className="absolute right-4 top-4 rounded-md border border-[#00ff6a]/30 p-2 text-[#00ff6a]/70 transition-colors hover:text-[#00ff6a]"
-      >
-        {muted ? <VolumeX size={16} /> : <Volume2 size={16} />}
-      </button>
+      <SoundToggle className="absolute right-4 top-4 rounded-md border border-[#00ff6a]/30 p-2 text-[#00ff6a]/70 transition-colors hover:text-[#00ff6a]" />
 
       <div
         onClick={phase === "gate" ? start : undefined}
