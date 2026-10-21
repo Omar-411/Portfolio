@@ -49,8 +49,12 @@ export async function unlockAudio(): Promise<void> {
   if (context.state === "suspended") await context.resume();
 }
 
+function ready(): boolean {
+  return context !== null && context.state === "running" && !isMuted();
+}
+
 function blip({ from, to = from, duration, volume, type = "square", delay = 0 }: BlipOptions): void {
-  if (!context || context.state !== "running" || isMuted()) return;
+  if (!context || !ready()) return;
 
   const start = context.currentTime + delay;
   const oscillator = context.createOscillator();
@@ -69,8 +73,79 @@ function blip({ from, to = from, duration, volume, type = "square", delay = 0 }:
   oscillator.stop(start + duration + 0.02);
 }
 
-export function playKey(): void {
-  blip({ from: 1500 + Math.random() * 500, to: 500, duration: 0.04, volume: 0.07 });
+interface NoiseOptions {
+  freq: number;
+  q: number;
+  duration: number;
+  volume: number;
+  delay?: number;
+  sweepTo?: number;
+}
+
+let noiseBuffer: AudioBuffer | null = null;
+
+function getNoise(audio: AudioContext): AudioBuffer {
+  if (!noiseBuffer) {
+    noiseBuffer = audio.createBuffer(1, audio.sampleRate, audio.sampleRate);
+    const data = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+  }
+  return noiseBuffer;
+}
+
+/** A short burst of band-passed noise: the "clack" of metal and paper. */
+function noise({ freq, q, duration, volume, delay = 0, sweepTo }: NoiseOptions): void {
+  if (!context || !ready()) return;
+
+  const start = context.currentTime + delay;
+  const source = context.createBufferSource();
+  const filter = context.createBiquadFilter();
+  const gain = context.createGain();
+
+  source.buffer = getNoise(context);
+  filter.type = "bandpass";
+  filter.Q.value = q;
+  filter.frequency.setValueAtTime(freq, start);
+  if (sweepTo) filter.frequency.exponentialRampToValueAtTime(sweepTo, start + duration);
+
+  gain.gain.setValueAtTime(volume, start);
+  gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+
+  source.connect(filter);
+  filter.connect(gain);
+  gain.connect(context.destination);
+  source.start(start, Math.random() * 0.5);
+  source.stop(start + duration + 0.02);
+}
+
+export type TypewriterKey = "key" | "space" | "backspace" | "enter";
+
+/** Typewriter: key strike + low thump + metal clack. Slightly randomised so it never sounds looped. */
+export function playKey(kind: TypewriterKey = "key"): void {
+  const jitter = 0.85 + Math.random() * 0.3;
+
+  switch (kind) {
+    case "space":
+      noise({ freq: 900 * jitter, q: 0.8, duration: 0.06, volume: 0.35 });
+      blip({ from: 110 * jitter, to: 45, duration: 0.09, volume: 0.25, type: "sine" });
+      break;
+    case "backspace":
+      noise({ freq: 1500 * jitter, q: 1, duration: 0.035, volume: 0.25 });
+      blip({ from: 200 * jitter, to: 90, duration: 0.05, volume: 0.1, type: "sine" });
+      break;
+    case "enter":
+      // Carriage slides back, hits the stop, then the bell rings.
+      noise({ freq: 1400, q: 0.7, duration: 0.22, volume: 0.18, sweepTo: 400 });
+      noise({ freq: 1000, q: 0.8, duration: 0.07, volume: 0.4, delay: 0.22 });
+      blip({ from: 120, to: 50, duration: 0.1, volume: 0.3, type: "sine", delay: 0.22 });
+      blip({ from: 2400, duration: 0.7, volume: 0.07, type: "sine", delay: 0.25 });
+      blip({ from: 4800, duration: 0.4, volume: 0.025, type: "sine", delay: 0.25 });
+      break;
+    default:
+      noise({ freq: 2200 * jitter, q: 1.2, duration: 0.03, volume: 0.3 });
+      blip({ from: 150 * jitter, to: 60, duration: 0.05, volume: 0.16, type: "sine" });
+      noise({ freq: 5000, q: 3, duration: 0.02, volume: 0.1, delay: 0.012 });
+  }
 }
 
 export function playBoot(): void {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { playClick, playHover, playKey, unlockAudio } from "@/lib/audio";
+import { playClick, playHover, playKey, unlockAudio, type TypewriterKey } from "@/lib/audio";
 
 // Buttons, links and anything that opts in with `data-sound` (e.g. project cards).
 // `data-sound="off"` opts out.
@@ -9,6 +9,13 @@ const SOUND_TARGET = "a[href], button:not(:disabled), [role=button], [data-sound
 const TEXT_FIELD = "textarea, input:not([type=checkbox]):not([type=radio]):not([type=submit]):not([type=button])";
 const HOVER_MIN_INTERVAL_MS = 60;
 const KEY_MIN_INTERVAL_MS = 30;
+
+function keyKind(key: string): TypewriterKey {
+  if (key === "Enter") return "enter";
+  if (key === " ") return "space";
+  if (key === "Backspace") return "backspace";
+  return "key";
+}
 
 function soundTarget(element: EventTarget | null): Element | null {
   const target = (element as Element | null)?.closest?.(SOUND_TARGET) ?? null;
@@ -54,7 +61,7 @@ export default function UiSounds() {
       const now = performance.now();
       if (now - lastKey < KEY_MIN_INTERVAL_MS) return;
       lastKey = now;
-      void unlockAudio().then(playKey);
+      void unlockAudio().then(() => playKey(keyKind(event.key)));
     };
 
     document.addEventListener("pointerover", onPointerOver, { passive: true });
