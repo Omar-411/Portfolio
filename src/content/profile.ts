@@ -1,0 +1,17 @@
+export const profile = {
+  name: "Omar Ajimi",
+  firstName: "OMAR",
+  lastName: "AJIMI",
+  role: "Full-Stack Developer",
+  seniority: "Mid-Level",
+  location: "Tunisia",
+  headline: "Full-Stack Developer · Blockchain · Web3",
+  bio: "JavaScript lover. Blockchain enthusiast. Crafting the decentralized future.",
+  passion: "Blockchain & DeFi",
+  availability: "Available for work",
+  email: "ajimiomar.oa@gmail.com",
+  githubUser: "Omar-411",
+  github: "https://github.com/Omar-411",
+  linkedin: "https://www.linkedin.com/in/omar-ajimi-7a5341118",
+  resume: "/Omar_Ajimi_Resume.pdf",
+} as const;

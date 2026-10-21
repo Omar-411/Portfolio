@@ -1,20 +1,32 @@
-import Portfolio from '../comps/hero';
-import Projects from '../comps/projects';
-import Skills from '../comps/skills';
-import Contact from '../comps/contact';
+import type { Metadata } from "next";
+import AuroraBackground from "@/components/effects/aurora-background";
+import MatrixRain from "@/components/effects/matrix-rain";
+import ScrollProgress from "@/components/effects/scroll-progress";
+import MotionProvider from "@/components/motion-provider";
+import Contact from "@/features/portfolio/contact/contact";
+import Hero from "@/features/portfolio/hero/hero";
+import Navbar from "@/features/portfolio/navbar";
+import Projects from "@/features/portfolio/projects/projects";
+import Skills from "@/features/portfolio/skills/skills";
 
-export const metadata = {
-  title: "Omar Ajimi | Portfolio",
+export const metadata: Metadata = {
+  title: "Portfolio",
   description: "Full-Stack & Blockchain Developer — Projects, Skills, Contact",
 };
 
 export default function PortfolioPage() {
   return (
-    <main className="bg-[#020b06]">
-      <Portfolio />
-      <Projects />
-      <Skills />
-      <Contact />
-    </main>
+    <MotionProvider>
+      <AuroraBackground />
+      <MatrixRain />
+      <ScrollProgress />
+      <Navbar />
+      <main className="relative z-10">
+        <Hero />
+        <Projects />
+        <Skills />
+        <Contact />
+      </main>
+    </MotionProvider>
   );
 }

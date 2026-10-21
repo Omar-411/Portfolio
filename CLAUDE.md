@@ -1,28 +1,43 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Guidance for Claude Code when working in this repository.
 
 ## Project
 
-Personal portfolio site (Omar Ajimi) built with Next.js 15 (App Router), React 19, TypeScript, and Tailwind CSS v4.
+Personal portfolio for Omar Ajimi. Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS v4, Framer Motion. Dark-only design (no theme switcher).
 
 ## Commands
 
-- `npm run dev` — start dev server (Turbopack) at http://localhost:3000
+- `npm run dev` — dev server (Turbopack) at http://localhost:3000
 - `npm run build` — production build
-- `npm run start` — run production build
-- `npm run lint` — ESLint (flat config, extends `next/core-web-vitals` and `next/typescript`)
+- `npm run start` — serve the production build
+- `npm run lint` — ESLint (flat config, `next/core-web-vitals` + `next/typescript`)
 
-There is no test suite configured in this repo.
+No test suite is configured.
 
-## Architecture
+## Routes
 
-- Single-page app: `src/app/page.tsx` composes the whole site as stacked `<section>`s (Hero, Projects, Skills, Contact) separated by `Divider` components, over a fixed `GridBackground` + radial-gradient backdrop that switches between light/dark variants via `dark:` classes.
-- Page-specific sections live in `src/app/comps/` (e.g. `hero.tsx`, `projects.tsx`, `orbiting.tsx`, `movinv-grid.tsx`, `navigation.tsx`). Reusable/generic UI primitives live in `src/components/ui/` (e.g. `button.tsx`, `divider.tsx`, `dropdown-menu.tsx`).
-- `Navigation` (`src/app/comps/navigation.tsx`) is not currently mounted in `layout.tsx` or `page.tsx` — check before assuming it's live on the site.
-- Theming: `next-themes` via `ThemeProvider` (`src/app/comps/theme-provider.tsx`), wired in `src/app/layout.tsx` with `attribute="class"` and `defaultTheme="system"`. Components should support both light and dark styles using Tailwind `dark:` variants (this is a hard requirement throughout the codebase, not optional polish).
-- Path alias `@/*` maps to `src/*` (see `tsconfig.json`).
-- shadcn/ui-style setup: `components.json` defines aliases (`@/components`, `@/components/ui`, `@/lib`, `@/lib/utils`) and uses the `new-york` style with `neutral` base color, RSC enabled, lucide icons.
-- `seraui.config.json` points to an external component registry (`https://seraui.seraprogrammer.com/registry`); `components/registry/seraui/` holds components pulled from that registry, separate from `src/components/ui/`.
-- `cn()` helper in `src/lib/utils.ts` (clsx + tailwind-merge) is the standard way to compose conditional Tailwind classes — use it instead of manual string concatenation.
-- The contact form in `page.tsx` posts directly to FormSubmit (`https://formsubmit.co/...`) — no backend/API route involved.
+- `/` — boot-terminal intro (`features/intro`). Waits for ENTER/click (this unlocks audio), types a short boot log (~2s), then routes to `/portfolio`. ESC or "skip intro" leaves immediately. A `sessionStorage` flag makes repeat visits skip it.
+- `/portfolio` — single page of snapping sections: Hero, Projects, Skills, Contact. `<main>` is the scroll container (not `window`).
+
+## Architecture (dependencies point inward)
+
+- `src/content/` — plain data: profile, skills, featured projects. Edit copy here, not in components.
+- `src/lib/` — infrastructure helpers with no UI: `audio.ts` (Web Audio, one lazy context, must be unlocked from a user gesture), `github.ts` (repo fetch, returns `null` on failure), `utils.ts` (`cn`).
+- `src/components/` — shared UI: `effects/` (aurora background, single shared matrix-rain canvas, custom cursor, scroll progress) and `motion-provider.tsx` (`LazyMotion` strict + reduced-motion).
+- `src/features/` — feature code: `intro/` and `portfolio/{hero,projects,skills,contact}` plus `portfolio/navbar.tsx`.
+- `src/app/` — routing only (layout, pages, `globals.css`).
+
+## Conventions
+
+- Animation: ambient loops are CSS (transform/opacity only); entrances and scroll reveals use Framer Motion's `m` components (never `motion`, `LazyMotion strict` will throw). Respect `prefers-reduced-motion`.
+- Tokens live in `@theme` in `globals.css` (`bg-void`, `text-neon`, `text-neon-soft`, `font-display`, `font-code`). Use them instead of hard-coded hex.
+- Sections use `.snap-section` (`min-height: 100dvh`); never clip them with `overflow: hidden`.
+- Projects show curated copy from `content/projects.ts`; GitHub data only adds language/stars/topics. If GitHub fails the card still renders, without invented data.
+- Use `cn()` for conditional classes.
+
+## Environment (see `.env.example`)
+
+- `GITHUB_TOKEN` — optional, raises the GitHub API rate limit.
+- `NEXT_PUBLIC_FORMSUBMIT_ALIAS` — optional FormSubmit alias so the real email isn't in the page source.
+- `NEXT_PUBLIC_SITE_URL` — optional, sets `metadataBase` for Open Graph URLs.
