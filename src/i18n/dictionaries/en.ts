@@ -166,7 +166,6 @@ export const en = {
     eyebrow: "/ / lab",
     title: "THE LAB",
     intro: "Small live tools I built. Try them, then read the code.",
-    viewCode: "View code",
     wallet: {
       title: "Wallet & ENS lookup",
       description: "Paste an Ethereum address or an ENS name. Reads the chain live from your browser.",

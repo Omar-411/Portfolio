@@ -169,7 +169,6 @@ export const fr: Dictionary = {
     eyebrow: "/ / lab",
     title: "LE LAB",
     intro: "De petits outils en direct que j'ai construits. Essayez-les, puis lisez le code.",
-    viewCode: "Voir le code",
     wallet: {
       title: "Recherche de wallet et ENS",
       description: "Collez une adresse Ethereum ou un nom ENS. Lit la blockchain en direct depuis votre navigateur.",
