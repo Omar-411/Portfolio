@@ -4,13 +4,13 @@ import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { createPortal } from "react-dom";
 import { CalendarCheck, CheckCircle2, X } from "lucide-react";
 import { profile } from "@/content/profile";
-import { submitForm } from "@/lib/formsubmit";
 import { cn } from "@/lib/utils";
 import { format, type Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
-import { formatDay, formatFull, formatTime, upcomingDays } from "./slots";
+import { fetchBusy, submitBooking, type BookingOutcome } from "./client";
+import { formatDay, formatFull, formatTime, isSlotBusy, upcomingDays, type BusyRange } from "./slots";
 
-type Status = "idle" | "sending" | "success" | "error";
+type Status = "idle" | "sending" | "error" | "taken" | BookingOutcome;
 
 interface BookingDialogProps {
   locale: Locale;
@@ -32,15 +32,31 @@ const chip = (active: boolean) =>
   );
 
 export default function BookingDialog({ locale, t, onClose }: BookingDialogProps) {
-  const days = useMemo(() => upcomingDays(), []);
+  const allDays = useMemo(() => upcomingDays(), []);
+  const [busy, setBusy] = useState<BusyRange[]>([]);
+  const days = useMemo(
+    () =>
+      allDays
+        .map((d) => ({ ...d, slots: d.slots.filter((slot) => !isSlotBusy(slot.iso, busy)) }))
+        .filter((d) => d.slots.length > 0),
+    [allDays, busy]
+  );
   const localZone = useMemo(() => Intl.DateTimeFormat().resolvedOptions().timeZone, []);
-  const [dayKey, setDayKey] = useState(days[0]?.key ?? "");
+  const [dayKey, setDayKey] = useState(allDays[0]?.key ?? "");
   const [slotIso, setSlotIso] = useState<string | null>(null);
   const [status, setStatus] = useState<Status>("idle");
   const closeRef = useRef<HTMLButtonElement>(null);
 
-  const day = days.find((d) => d.key === dayKey);
+  const day = days.find((d) => d.key === dayKey) ?? days[0];
   const sameZone = localZone === TUNIS_TZ;
+
+  useEffect(() => {
+    let active = true;
+    fetchBusy().then((ranges) => active && setBusy(ranges));
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     closeRef.current?.focus();
@@ -58,16 +74,31 @@ export default function BookingDialog({ locale, t, onClose }: BookingDialogProps
     event.preventDefault();
     if (!slotIso) return;
 
-    const body = new FormData(event.currentTarget);
-    body.append("slot_tunis_time", formatFull(slotIso, "en", TUNIS_TZ));
-    body.append("slot_visitor_time", `${formatFull(slotIso, "en", localZone)} (${localZone})`);
-    body.append("slot_iso_utc", slotIso);
+    const form = new FormData(event.currentTarget);
+    const field = (key: string) => String(form.get(key) ?? "");
 
     setStatus("sending");
-    setStatus((await submitForm(body, t.emailSubject)) ? "success" : "error");
+    const outcome = await submitBooking({
+      name: field("name"),
+      email: field("email"),
+      topic: field("topic"),
+      slot: slotIso,
+      website: field("website"),
+      emailFields: {
+        slot_tunis_time: formatFull(slotIso, "en", TUNIS_TZ),
+        slot_visitor_time: `${formatFull(slotIso, "en", localZone)} (${localZone})`,
+        slot_iso_utc: slotIso,
+      },
+      emailSubject: t.emailSubject,
+    });
+
+    if (outcome === "taken") {
+      setSlotIso(null);
+      setBusy(await fetchBusy());
+    }
+    setStatus(outcome);
   };
 
-  // Portal: the page sits in its own stacking context, which would put the navbar above the backdrop.
   return createPortal(
     <div
       className="fixed inset-0 z-[9000] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
@@ -95,10 +126,10 @@ export default function BookingDialog({ locale, t, onClose }: BookingDialogProps
         </h3>
         <p className="mb-5 text-sm text-white/50">{t.subtitle}</p>
 
-        {status === "success" ? (
+        {status === "invited" || status === "requested" ? (
           <div className="flex flex-col items-center gap-3 py-8 text-center" role="status">
             <CheckCircle2 size={40} className="text-neon" aria-hidden="true" />
-            <p className="text-white">{t.success}</p>
+            <p className="text-white">{status === "invited" ? t.successInvited : t.success}</p>
             {slotIso && <p className="font-mono text-sm text-neon">{formatFull(slotIso, locale, TUNIS_TZ)}</p>}
             <button type="button" onClick={onClose} className="mt-2 rounded-lg border border-white/15 px-4 py-2 text-sm text-white/70 hover:text-white">
               {t.close}
@@ -149,13 +180,14 @@ export default function BookingDialog({ locale, t, onClose }: BookingDialogProps
               </p>
             </fieldset>
 
+            <input name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="sr-only" />
             <input name="name" required autoComplete="name" placeholder={t.name} className={fieldClass} disabled={status === "sending"} />
             <input name="email" type="email" required autoComplete="email" placeholder={t.email} className={fieldClass} disabled={status === "sending"} />
             <textarea name="topic" rows={3} placeholder={t.topic} className={cn(fieldClass, "resize-none")} disabled={status === "sending"} />
 
-            {status === "error" && (
+            {(status === "error" || status === "taken") && (
               <p role="alert" className="text-sm text-red-400">
-                {format(t.error, { email: profile.email })}
+                {status === "taken" ? t.taken : format(t.error, { email: profile.email })}
               </p>
             )}
 

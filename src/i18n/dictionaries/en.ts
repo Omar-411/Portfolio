@@ -124,6 +124,8 @@ export const en = {
       chooseSlot: "Choose a time",
       submit: "Request {slot}",
       sending: "Sending...",
+      successInvited: "Done. A calendar invitation with a Meet link is on its way to your email.",
+      taken: "That time was just taken. Please pick another.",
       success: "Request sent. I'll confirm by email.",
       error: "Something went wrong. Email me directly at {email}.",
       close: "Close",

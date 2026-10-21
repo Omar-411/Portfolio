@@ -127,6 +127,8 @@ export const fr: Dictionary = {
       chooseSlot: "Choisissez une heure",
       submit: "Demander le {slot}",
       sending: "Envoi...",
+      successInvited: "C'est fait. Une invitation Google Agenda avec un lien Meet arrive dans votre boîte mail.",
+      taken: "Ce créneau vient d'être pris. Choisissez-en un autre.",
       success: "Demande envoyée. Je confirme par e-mail.",
       error: "Une erreur est survenue. Écrivez-moi directement à {email}.",
       close: "Fermer",

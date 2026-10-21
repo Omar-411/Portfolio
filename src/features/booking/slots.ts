@@ -3,6 +3,7 @@ const TUNIS_UTC_OFFSET_HOURS = 1;
 const SLOT_HOURS_TUNIS = [10, 11, 14, 15, 16] as const;
 const BOOKABLE_DAYS = 10;
 const MIN_NOTICE_HOURS = 12;
+export const SLOT_MINUTES = 30;
 
 export interface Slot {
   /** ISO instant, used as a stable key. */
@@ -64,3 +65,26 @@ export const formatFull = (iso: string, locale: string, timeZone?: string): stri
     timeZone,
     timeZoneName: "short",
   }).format(new Date(iso));
+
+export interface BusyRange {
+  start: string;
+  end: string;
+}
+
+export function isBookableSlot(iso: string, now: Date = new Date()): boolean {
+  return upcomingDays(now).some((day) => day.slots.some((slot) => slot.iso === iso));
+}
+
+export function isSlotBusy(iso: string, busy: BusyRange[]): boolean {
+  const start = Date.parse(iso);
+  const end = start + SLOT_MINUTES * 60_000;
+  return busy.some((range) => Date.parse(range.start) < end && Date.parse(range.end) > start);
+}
+
+/** Window to query for availability: covers every bookable slot. */
+export function availabilityWindow(now: Date = new Date()): { timeMin: string; timeMax: string } {
+  const days = upcomingDays(now);
+  const lastDay = days[days.length - 1];
+  const last = lastDay.slots[lastDay.slots.length - 1];
+  return { timeMin: now.toISOString(), timeMax: new Date(Date.parse(last.iso) + SLOT_MINUTES * 60_000).toISOString() };
+}

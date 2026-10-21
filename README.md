@@ -20,4 +20,4 @@ bun run build && bun start
 
 ## Configure
 
-Copy `.env.example` to `.env.local`. Content lives in `src/content/` and `src/i18n/dictionaries/`. See `CLAUDE.md` for the architecture and what is left to fill in.
+Copy `.env.example` to `.env.local`. For real Google Calendar invitations on "Book a call", follow `docs/google-calendar-setup.md`. Content lives in `src/content/` and `src/i18n/dictionaries/`. See `CLAUDE.md` for the architecture and what is left to fill in.
