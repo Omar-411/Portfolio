@@ -51,7 +51,7 @@ export default async function PortfolioPage({ params }: PageProps) {
         <Experience t={dictionary.experience} />
         <Projects locale={lang} t={dictionary.projects} />
         <Skills locale={lang} t={dictionary.skills} />
-        <Services t={dictionary.services} bookingUrl={bookingUrl} proof={web3Proof} />
+        <Services locale={lang} t={dictionary.services} bookingUrl={bookingUrl} proof={web3Proof} />
         <Contact t={dictionary.contact} />
       </main>
     </>

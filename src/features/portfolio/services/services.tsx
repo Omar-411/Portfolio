@@ -1,14 +1,17 @@
 "use client";
 
+import { useState } from "react";
 import { m } from "framer-motion";
 import { Blocks, CalendarCheck, Code2, ExternalLink, Server } from "lucide-react";
-import { profile } from "@/content/profile";
+import BookingDialog from "@/features/booking/booking-dialog";
 import type { Web3Proof } from "@/content/web3";
+import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
 
 const ICONS = [Code2, Blocks, Server] as const;
 
 interface ServicesProps {
+  locale: Locale;
   t: Dictionary["services"];
   bookingUrl: string | null;
   proof: Web3Proof;
@@ -16,9 +19,11 @@ interface ServicesProps {
 
 const shorten = (address: string) => (address.length > 14 ? `${address.slice(0, 8)}…${address.slice(-6)}` : address);
 
-export default function Services({ t, bookingUrl, proof }: ServicesProps) {
+export default function Services({ locale, t, bookingUrl, proof }: ServicesProps) {
   const hasProof = proof.ens !== null || proof.contracts.length > 0;
-  const ctaHref = bookingUrl ?? `mailto:${profile.email}?subject=${encodeURIComponent(t.bookSubject)}`;
+  const [bookingOpen, setBookingOpen] = useState(false);
+  const ctaClass =
+    "inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 px-7 py-3 font-semibold text-white transition-all duration-200 hover:scale-[1.03] hover:shadow-[0_0_30px_rgba(0,255,106,0.4)]";
 
   return (
     <section id="services" className="snap-section flex items-center">
@@ -55,14 +60,17 @@ export default function Services({ t, bookingUrl, proof }: ServicesProps) {
         </ul>
 
         <div className="mt-10 flex justify-center">
-          <a
-            href={ctaHref}
-            {...(bookingUrl ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 px-7 py-3 font-semibold text-white transition-all duration-200 hover:scale-[1.03] hover:shadow-[0_0_30px_rgba(0,255,106,0.4)]"
-          >
-            <CalendarCheck size={16} aria-hidden="true" />
-            {bookingUrl ? t.bookCall : t.bookByEmail}
-          </a>
+          {bookingUrl ? (
+            <a href={bookingUrl} target="_blank" rel="noopener noreferrer" className={ctaClass}>
+              <CalendarCheck size={16} aria-hidden="true" />
+              {t.bookCall}
+            </a>
+          ) : (
+            <button type="button" onClick={() => setBookingOpen(true)} className={ctaClass}>
+              <CalendarCheck size={16} aria-hidden="true" />
+              {t.bookCall}
+            </button>
+          )}
         </div>
 
         {hasProof && (
@@ -95,6 +103,8 @@ export default function Services({ t, bookingUrl, proof }: ServicesProps) {
           </div>
         )}
       </div>
+
+      {bookingOpen && <BookingDialog locale={locale} t={t.booking} onClose={() => setBookingOpen(false)} />}
     </section>
   );
 }

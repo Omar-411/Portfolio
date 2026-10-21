@@ -5,30 +5,17 @@ import { m } from "framer-motion";
 import { Github, Linkedin, Mail, Send } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { profile } from "@/content/profile";
+import { submitForm } from "@/lib/formsubmit";
 import { format } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
 
 type Status = "idle" | "sending" | "success" | "error";
-
-// An activated FormSubmit alias keeps the real address out of the page source.
-const FORM_TARGET = process.env.NEXT_PUBLIC_FORMSUBMIT_ALIAS ?? profile.email;
-const ENDPOINT = `https://formsubmit.co/ajax/${FORM_TARGET}`;
 
 const fieldClass =
   "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 font-code text-sm text-white placeholder-white/30 transition-all focus:border-emerald-500/60 focus:bg-white/[0.08] focus:outline-none focus:ring-1 focus:ring-emerald-500/30 disabled:opacity-60";
 
 const socialClass =
   "flex items-center gap-2 text-sm text-white/30 transition-colors duration-200 hover:text-neon";
-
-async function sendMessage(form: HTMLFormElement, subject: string): Promise<boolean> {
-  const body = new FormData(form);
-  body.append("_captcha", "false");
-  body.append("_subject", subject);
-  body.append("_template", "table");
-
-  const response = await fetch(ENDPOINT, { method: "POST", body, headers: { Accept: "application/json" } });
-  return response.ok;
-}
 
 export default function Contact({ t }: { t: Dictionary["contact"] }) {
   const [status, setStatus] = useState<Status>("idle");
@@ -38,13 +25,9 @@ export default function Contact({ t }: { t: Dictionary["contact"] }) {
     const form = event.currentTarget;
     setStatus("sending");
 
-    try {
-      const ok = await sendMessage(form, t.subject);
-      if (ok) form.reset();
-      setStatus(ok ? "success" : "error");
-    } catch {
-      setStatus("error");
-    }
+    const ok = await submitForm(new FormData(form), t.subject);
+    if (ok) form.reset();
+    setStatus(ok ? "success" : "error");
   };
 
   const sending = status === "sending";
