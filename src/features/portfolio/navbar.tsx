@@ -21,6 +21,11 @@ const SECTIONS = [
   { key: "contact", id: "contact" },
 ] as const;
 
+const EXTRA_PAGES = [
+  { key: "systems", path: "systems" },
+  { key: "lab", path: "lab" },
+] as const;
+
 interface NavbarProps {
   locale: Locale;
   t: Dictionary["nav"];
@@ -38,6 +43,7 @@ export default function Navbar({ locale, t }: NavbarProps) {
 
   const portfolioPath = `/${locale}/portfolio`;
   const onPortfolio = pathname === portfolioPath;
+  const onSystems = pathname.startsWith(`/${locale}/systems`);
   const onLab = pathname.startsWith(`/${locale}/lab`);
   const hrefFor = (id: string) => (onPortfolio ? `#${id}` : `${portfolioPath}#${id}`);
 
@@ -86,12 +92,15 @@ export default function Navbar({ locale, t }: NavbarProps) {
           OA
         </Link>
 
-        <div className="hidden items-center gap-0.5 rounded-full border border-white/10 bg-white/5 px-2 py-1 backdrop-blur-md md:flex">
+        <div className="hidden items-center gap-0.5 rounded-full border border-white/10 bg-white/5 px-2 py-1 backdrop-blur-md lg:flex">
           {SECTIONS.map(({ key, id }) => (
             <Link key={id} href={hrefFor(id)} className={pillClass(onPortfolio && activeId === id)}>
               {t[key]}
             </Link>
           ))}
+          <Link href={`/${locale}/systems`} className={pillClass(onSystems)}>
+            {t.systems}
+          </Link>
           <Link href={`/${locale}/lab`} className={pillClass(onLab)}>
             {t.lab}
           </Link>
@@ -132,7 +141,7 @@ export default function Navbar({ locale, t }: NavbarProps) {
             onClick={() => setMenuOpen((current) => !current)}
             aria-label={menuOpen ? t.closeMenu : t.openMenu}
             aria-expanded={menuOpen}
-            className={cn(iconButton, "md:hidden")}
+            className={cn(iconButton, "lg:hidden")}
           >
             {menuOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
@@ -151,13 +160,16 @@ export default function Navbar({ locale, t }: NavbarProps) {
               {t[key]}
             </Link>
           ))}
-          <Link
-            href={`/${locale}/lab`}
-            onClick={() => setMenuOpen(false)}
-            className="font-display text-3xl font-bold text-white/70 transition-colors duration-200 hover:text-neon"
-          >
-            {t.lab}
-          </Link>
+          {EXTRA_PAGES.map(({ key, path }) => (
+            <Link
+              key={path}
+              href={`/${locale}/${path}`}
+              onClick={() => setMenuOpen(false)}
+              className="font-display text-3xl font-bold text-white/70 transition-colors duration-200 hover:text-neon"
+            >
+              {t[key]}
+            </Link>
+          ))}
         </div>
       )}
     </nav>

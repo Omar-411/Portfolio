@@ -16,6 +16,7 @@ bun run build && bun start
 - Hover, click and real typewriter key sounds, with a mute toggle.
 - `Ctrl/Cmd + K` opens a terminal command palette (`help`, `projects`, `lang fr`, `sound`, ...).
 - One-page site: Hero, Experience and education, Projects, Skills, Services, Contact.
+- System design gallery: diagrams, key decisions and trade-offs for three architectures.
 - Lab: live Web3 demos (wallet and ENS lookup, gas estimator, signature check) and the typewriter sound toy.
 - Real "Book a call" with Google Calendar invitations, case study pages, live GitHub activity, sitemap, robots, Open Graph image, JSON-LD.
 

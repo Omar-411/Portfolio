@@ -42,6 +42,7 @@ export const COMMAND_NAMES = [
   "skills",
   "services",
   "contact",
+  "systems",
   "lab",
   "resume",
   "github",
@@ -95,6 +96,9 @@ export function runCommand(
   switch (name) {
     case "help":
       return { lines: helpLines(t) };
+    case "systems":
+      actions.goToPath(`/${locale}/systems`);
+      return { lines: [format(t.opening, { target: "systems" })], closeAfterMs: NAVIGATE_CLOSE_MS };
     case "lab":
       actions.goToPath(`/${locale}/lab`);
       return { lines: [format(t.opening, { target: "lab" })], closeAfterMs: NAVIGATE_CLOSE_MS };
