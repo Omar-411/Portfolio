@@ -11,7 +11,13 @@ export async function submitForm(body: FormData, subject: string): Promise<boole
   body.append("_template", "table");
 
   try {
-    const response = await fetch(endpoint, { method: "POST", body, headers: { Accept: "application/json" } });
+    const response = await fetch(endpoint, {
+      method: "POST",
+      body,
+      headers: { Accept: "application/json" },
+      // A slow mail relay must not hold a visitor's request open.
+      signal: AbortSignal.timeout(8000),
+    });
     return response.ok;
   } catch {
     return false;

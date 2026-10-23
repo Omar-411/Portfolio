@@ -4,6 +4,7 @@ import ScrollProgress from "@/components/effects/scroll-progress";
 import Navbar from "@/features/portfolio/navbar";
 import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
+import { isReviewsConfigured } from "@/lib/reviews-store";
 
 /** Shared frame for the content pages (case studies, lab): background, nav, and a readable column. */
 interface SiteChromeProps {
@@ -20,7 +21,7 @@ export default function SiteChrome({ locale, wide = false, children }: SiteChrom
       <AuroraBackground />
       <MatrixRain />
       <ScrollProgress />
-      <Navbar locale={locale} t={dictionary.nav} />
+      <Navbar locale={locale} t={dictionary.nav} showReviews={isReviewsConfigured} />
       <main className={`relative z-10 mx-auto min-h-dvh px-6 pb-24 pt-28 ${wide ? "max-w-5xl" : "max-w-3xl"}`}>
         {children}
         <p className="mt-16 text-center text-xs text-white/30">{dictionary.footer.rights}</p>

@@ -21,6 +21,8 @@ const SECTIONS = [
   { key: "services", id: "services" },
 ] as const;
 
+const REVIEWS_SECTION = { key: "reviews", id: "reviews" } as const;
+
 const EXTRA_PAGES = [
   { key: "systems", path: "systems" },
   { key: "lab", path: "lab" },
@@ -29,17 +31,20 @@ const EXTRA_PAGES = [
 interface NavbarProps {
   locale: Locale;
   t: Dictionary["nav"];
+  /** The reviews section only exists once its storage is configured. */
+  showReviews?: boolean;
 }
 
 const iconButton =
   "rounded-lg p-1.5 text-white/40 transition-colors duration-200 hover:bg-white/10 hover:text-neon";
 
-export default function Navbar({ locale, t }: NavbarProps) {
+export default function Navbar({ locale, t, showReviews = false }: NavbarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const { open: openPalette } = usePalette();
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeId, setActiveId] = useState<string>(SECTIONS[0].id);
+  const sections = showReviews ? [...SECTIONS, REVIEWS_SECTION] : SECTIONS;
 
   const portfolioPath = `/${locale}/portfolio`;
   const onPortfolio = pathname === portfolioPath;
@@ -62,12 +67,12 @@ export default function Navbar({ locale, t }: NavbarProps) {
       { root: container, rootMargin: "-50% 0px -50% 0px" }
     );
 
-    for (const { id } of SECTIONS) {
+    for (const { id } of showReviews ? [...SECTIONS, REVIEWS_SECTION] : SECTIONS) {
       const section = document.getElementById(id);
       if (section) observer.observe(section);
     }
     return () => observer.disconnect();
-  }, [onPortfolio]);
+  }, [onPortfolio, showReviews]);
 
   const switchLocale = (next: Locale) => {
     if (next === locale) return;
@@ -93,7 +98,7 @@ export default function Navbar({ locale, t }: NavbarProps) {
         </TransitionLink>
 
         <div className="hidden items-center gap-0.5 rounded-full border border-white/10 bg-white/5 px-2 py-1 backdrop-blur-md lg:flex">
-          {SECTIONS.map(({ key, id }) => (
+          {sections.map(({ key, id }) => (
             <TransitionLink key={id} href={hrefFor(id)} className={pillClass(onPortfolio && activeId === id)}>
               {t[key]}
             </TransitionLink>
@@ -150,7 +155,7 @@ export default function Navbar({ locale, t }: NavbarProps) {
 
       {menuOpen && (
         <div className="fixed inset-0 -z-10 flex flex-col items-center justify-center gap-6 bg-void/95 backdrop-blur-md">
-          {SECTIONS.map(({ key, id }) => (
+          {sections.map(({ key, id }) => (
             <TransitionLink
               key={id}
               href={hrefFor(id)}
