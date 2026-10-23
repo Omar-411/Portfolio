@@ -16,7 +16,8 @@ bun run build && bun start
 - Hover, click and real typewriter key sounds, with a mute toggle.
 - `Ctrl/Cmd + K` opens a terminal command palette (`help`, `projects`, `lang fr`, `sound`, ...) with a few hidden commands. Try `whoami`.
 - One-page site: Hero, Experience and education, Projects, Skills, Services, Contact.
-- System design gallery: diagrams, key decisions and trade-offs for three architectures.
+- System design gallery: diagrams, key decisions and trade-offs for three architectures, with data packets flowing along the connections.
+- Motion: the hero name is painted by falling matrix glyphs on the first visit, and pages change with a terminal scan-line wipe. All of it is off under `prefers-reduced-motion`.
 - Lab: live Web3 demos (wallet and ENS lookup, gas estimator, signature check) and the typewriter sound toy.
 - Real "Book a call" with Google Calendar invitations, case study pages, live GitHub activity, sitemap, robots, Open Graph image, JSON-LD.
 

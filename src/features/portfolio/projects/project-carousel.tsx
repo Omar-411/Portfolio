@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import TransitionLink from "@/features/transition/transition-link";
 import { ArrowRight, ChevronLeft, ChevronRight, ExternalLink, Github, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { profile } from "@/content/profile";
@@ -144,13 +144,13 @@ export default function ProjectCarousel({ projects, locale, t }: ProjectCarousel
                       <Github size={18} />
                     </a>
                     {project.caseStudySlug && (
-                      <Link
+                      <TransitionLink
                         href={`/${locale}/projects/${project.caseStudySlug}`}
                         className="inline-flex items-center gap-1 text-xs font-medium text-neon-soft transition-colors hover:text-neon"
                       >
                         {t.caseStudy}
                         <ArrowRight size={12} aria-hidden="true" />
-                      </Link>
+                      </TransitionLink>
                     )}
                     {project.homepage && (
                       <a

@@ -107,6 +107,13 @@ body {
   }
 }
 
+/* ── Hero name landing ── */
+@keyframes name-settle {
+  from { filter: drop-shadow(0 0 14px rgba(0, 255, 106, 0.9)) brightness(1.6); }
+  to { filter: none; }
+}
+.name-settle { animation: name-settle 0.7s ease-out both; }
+
 /* ── Utilities ── */
 .glass-card {
   backdrop-filter: blur(20px);

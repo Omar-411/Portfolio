@@ -5,6 +5,7 @@ import RootBody from "@/components/root-body";
 import UiSounds from "@/components/ui-sounds";
 import BookingProvider from "@/features/booking/booking-provider";
 import PaletteProvider from "@/features/palette/palette-provider";
+import TransitionProvider from "@/features/transition/transition-provider";
 import { isLocale, locales } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { bookingUrl, metadataBase, viewport as siteViewport } from "@/lib/site";
@@ -56,12 +57,14 @@ export default async function LocaleLayout({
     <html lang={lang}>
       <RootBody>
         <MotionProvider>
-          <BookingProvider locale={lang} t={dictionary.services.booking} bookingUrl={bookingUrl}>
-            <PaletteProvider locale={lang} t={dictionary.palette}>
-              <UiSounds />
-              {children}
-            </PaletteProvider>
-          </BookingProvider>
+          <TransitionProvider>
+            <BookingProvider locale={lang} t={dictionary.services.booking} bookingUrl={bookingUrl}>
+              <PaletteProvider locale={lang} t={dictionary.palette}>
+                <UiSounds />
+                {children}
+              </PaletteProvider>
+            </BookingProvider>
+          </TransitionProvider>
         </MotionProvider>
       </RootBody>
     </html>

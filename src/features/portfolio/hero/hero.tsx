@@ -6,6 +6,7 @@ import { ArrowRight, Download, Github, Linkedin } from "lucide-react";
 import { profile } from "@/content/profile";
 import { heroSkills } from "@/content/skills";
 import type { Dictionary } from "@/i18n/get-dictionary";
+import AnimatedName from "./animated-name";
 import HeroCodeCard from "./hero-code-card";
 
 const container: Variants = {
@@ -51,10 +52,10 @@ export default function Hero({ t }: { t: Dictionary["hero"] }) {
 
           <m.h1
             variants={item}
+            aria-label={`${profile.firstName} ${profile.lastName}`}
             className="font-display text-5xl font-extrabold leading-none tracking-tight text-white sm:text-6xl xl:text-7xl"
           >
-            <span className="block">{profile.firstName}</span>
-            <span className="text-aurora block">{profile.lastName}</span>
+            <AnimatedName first={profile.firstName} last={profile.lastName} />
           </m.h1>
 
           <m.p variants={item} className="font-mono text-sm uppercase tracking-widest text-neon-soft">

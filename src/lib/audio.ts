@@ -157,6 +157,12 @@ export function playSuccess(): void {
   blip({ from: 990, duration: 0.22, volume: 0.12, type: "sine", delay: 0.12 });
 }
 
+/** A short rising sweep of filtered noise for the page-change wipe. */
+export function playScan(): void {
+  noise({ freq: 300, q: 1.5, duration: 0.32, volume: 0.22, sweepTo: 3200 });
+  blip({ from: 180, to: 720, duration: 0.3, volume: 0.04, type: "sawtooth" });
+}
+
 export function playHover(): void {
   blip({ from: 880, to: 1320, duration: 0.05, volume: 0.035, type: "sine" });
 }

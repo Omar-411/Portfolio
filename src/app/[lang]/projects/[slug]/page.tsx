@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
+import TransitionLink from "@/features/transition/transition-link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ExternalLink, Github, Star } from "lucide-react";
 import SiteChrome from "@/components/site-chrome";
@@ -49,13 +49,13 @@ export default async function CaseStudyPage({ params }: PageProps) {
 
   return (
     <SiteChrome locale={locale}>
-      <Link
+      <TransitionLink
         href={`/${locale}/portfolio#projects`}
         className="mb-8 inline-flex items-center gap-2 text-sm text-white/50 transition-colors hover:text-neon"
       >
         <ArrowLeft size={14} aria-hidden="true" />
         {t.back}
-      </Link>
+      </TransitionLink>
 
       <article>
         <h1 className="font-display text-4xl font-extrabold text-white md:text-5xl">{study.title}</h1>

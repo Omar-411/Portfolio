@@ -6,6 +6,7 @@ import { useBooking } from "@/features/booking/booking-provider";
 import { rememberLocale } from "@/i18n/client";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
+import { useRouteTransition } from "@/features/transition/transition-provider";
 import { playClick, playSuccess, setMuted, unlockAudio } from "@/lib/audio";
 import CommandPalette from "./command-palette";
 import { runCommand, type PaletteActions } from "./commands";
@@ -34,6 +35,7 @@ export default function PaletteProvider({ locale, t, children }: PaletteProvider
   const [isOpen, setIsOpen] = useState(false);
   const returnFocusTo = useRef<HTMLElement | null>(null);
   const booking = useBooking();
+  const { navigate } = useRouteTransition();
   const bookAfterClose = useRef(false);
 
   const open = useCallback(() => {
@@ -72,10 +74,10 @@ export default function PaletteProvider({ locale, t, children }: PaletteProvider
         if (pathname === `/${locale}/portfolio`) {
           document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
         } else {
-          router.push(`/${locale}/portfolio#${id}`);
+          navigate(`/${locale}/portfolio#${id}`);
         }
       },
-      goToPath: (path) => router.push(path),
+      goToPath: navigate,
       openExternal: (url) => window.open(url, "_blank", "noopener,noreferrer"),
       download: (url) => {
         const link = document.createElement("a");
@@ -96,7 +98,7 @@ export default function PaletteProvider({ locale, t, children }: PaletteProvider
         playSuccess();
       },
     }),
-    [locale, pathname, router]
+    [locale, navigate, pathname, router]
   );
 
   const value = useMemo(() => ({ open }), [open]);

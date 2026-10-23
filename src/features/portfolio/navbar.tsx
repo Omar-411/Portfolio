@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Github, Menu, Terminal, X } from "lucide-react";
 import SoundToggle from "@/components/sound-toggle";
@@ -11,6 +10,7 @@ import { rememberLocale } from "@/i18n/client";
 import { locales, type Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import { usePalette } from "@/features/palette/palette-provider";
+import TransitionLink from "@/features/transition/transition-link";
 import { cn } from "@/lib/utils";
 
 const SECTIONS = [
@@ -85,26 +85,26 @@ export default function Navbar({ locale, t }: NavbarProps) {
   return (
     <nav className="fixed inset-x-0 top-0 z-50" aria-label={t.main}>
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
-        <Link
+        <TransitionLink
           href={hrefFor("hero")}
           aria-label={t.backToTop}
           className="relative block h-10 w-10 overflow-hidden rounded-full ring-2 ring-emerald-400/60 transition-shadow duration-300 hover:shadow-[0_0_18px_rgba(0,255,106,0.55)]"
         >
           <Image src="/pdp-avatar.jpg" alt="" fill sizes="40px" priority className="object-cover" />
-        </Link>
+        </TransitionLink>
 
         <div className="hidden items-center gap-0.5 rounded-full border border-white/10 bg-white/5 px-2 py-1 backdrop-blur-md lg:flex">
           {SECTIONS.map(({ key, id }) => (
-            <Link key={id} href={hrefFor(id)} className={pillClass(onPortfolio && activeId === id)}>
+            <TransitionLink key={id} href={hrefFor(id)} className={pillClass(onPortfolio && activeId === id)}>
               {t[key]}
-            </Link>
+            </TransitionLink>
           ))}
-          <Link href={`/${locale}/systems`} className={pillClass(onSystems)}>
+          <TransitionLink href={`/${locale}/systems`} className={pillClass(onSystems)}>
             {t.systems}
-          </Link>
-          <Link href={`/${locale}/lab`} className={pillClass(onLab)}>
+          </TransitionLink>
+          <TransitionLink href={`/${locale}/lab`} className={pillClass(onLab)}>
             {t.lab}
-          </Link>
+          </TransitionLink>
         </div>
 
         <div className="flex items-center gap-1.5">
@@ -152,24 +152,24 @@ export default function Navbar({ locale, t }: NavbarProps) {
       {menuOpen && (
         <div className="fixed inset-0 -z-10 flex flex-col items-center justify-center gap-6 bg-void/95 backdrop-blur-md">
           {SECTIONS.map(({ key, id }) => (
-            <Link
+            <TransitionLink
               key={id}
               href={hrefFor(id)}
               onClick={() => setMenuOpen(false)}
               className="font-display text-3xl font-bold text-white/70 transition-colors duration-200 hover:text-neon"
             >
               {t[key]}
-            </Link>
+            </TransitionLink>
           ))}
           {EXTRA_PAGES.map(({ key, path }) => (
-            <Link
+            <TransitionLink
               key={path}
               href={`/${locale}/${path}`}
               onClick={() => setMenuOpen(false)}
               className="font-display text-3xl font-bold text-white/70 transition-colors duration-200 hover:text-neon"
             >
               {t[key]}
-            </Link>
+            </TransitionLink>
           ))}
         </div>
       )}

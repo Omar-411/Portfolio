@@ -1,5 +1,6 @@
 import type { NodeKind, SystemDesign } from "@/content/systems";
 import type { Locale } from "@/i18n/config";
+import FlowPackets from "./flow-packets";
 import { layoutDiagram, NODE_HEIGHT, NODE_WIDTH, wrapLabel } from "./layout";
 
 const KIND_CLASS: Record<NodeKind, string> = {
@@ -85,6 +86,9 @@ export default function SystemDiagram({ system, locale, ariaLabel, flowsLabel }:
             markerEnd={`url(#${markerId})`}
           />
         ))}
+
+        {/* Under the nodes, so a packet disappears behind the box it arrives at. */}
+        <FlowPackets paths={layout.edges.map((edge) => edge.d)} />
 
         {layout.nodes.map(({ id, x, y }) => {
           const node = nodeById.get(id);
