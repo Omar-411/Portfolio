@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import { m } from "framer-motion";
 import { Blocks, CalendarCheck, Code2, ExternalLink, Server } from "lucide-react";
-import BookingDialog from "@/features/booking/booking-dialog";
+import { useBooking } from "@/features/booking/booking-provider";
 import type { Web3Proof } from "@/content/web3";
 import type { Activity } from "@/lib/github";
 import type { Locale } from "@/i18n/config";
@@ -24,7 +23,7 @@ const shorten = (address: string) => (address.length > 14 ? `${address.slice(0, 
 
 export default function Services({ locale, t, bookingUrl, proof, activity }: ServicesProps) {
   const hasProof = proof.ens !== null || proof.contracts.length > 0;
-  const [bookingOpen, setBookingOpen] = useState(false);
+  const booking = useBooking();
   const ctaClass =
     "inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 px-7 py-3 font-semibold text-white transition-all duration-200 hover:scale-[1.03] hover:shadow-[0_0_30px_rgba(0,255,106,0.4)]";
 
@@ -69,7 +68,7 @@ export default function Services({ locale, t, bookingUrl, proof, activity }: Ser
               {t.bookCall}
             </a>
           ) : (
-            <button type="button" onClick={() => setBookingOpen(true)} className={ctaClass}>
+            <button type="button" onClick={booking.open} className={ctaClass}>
               <CalendarCheck size={16} aria-hidden="true" />
               {t.bookCall}
             </button>
@@ -109,7 +108,6 @@ export default function Services({ locale, t, bookingUrl, proof, activity }: Ser
         <NowActivity title={t.nowTitle} locale={locale} activity={activity} />
       </div>
 
-      {bookingOpen && <BookingDialog locale={locale} t={t.booking} onClose={() => setBookingOpen(false)} />}
     </section>
   );
 }

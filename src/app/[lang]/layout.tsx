@@ -3,10 +3,11 @@ import { notFound } from "next/navigation";
 import MotionProvider from "@/components/motion-provider";
 import RootBody from "@/components/root-body";
 import UiSounds from "@/components/ui-sounds";
+import BookingProvider from "@/features/booking/booking-provider";
 import PaletteProvider from "@/features/palette/palette-provider";
 import { isLocale, locales } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
-import { metadataBase, viewport as siteViewport } from "@/lib/site";
+import { bookingUrl, metadataBase, viewport as siteViewport } from "@/lib/site";
 import "../globals.css";
 
 export const dynamicParams = false;
@@ -55,10 +56,12 @@ export default async function LocaleLayout({
     <html lang={lang}>
       <RootBody>
         <MotionProvider>
-          <PaletteProvider locale={lang} t={dictionary.palette}>
-            <UiSounds />
-            {children}
-          </PaletteProvider>
+          <BookingProvider locale={lang} t={dictionary.services.booking} bookingUrl={bookingUrl}>
+            <PaletteProvider locale={lang} t={dictionary.palette}>
+              <UiSounds />
+              {children}
+            </PaletteProvider>
+          </BookingProvider>
         </MotionProvider>
       </RootBody>
     </html>

@@ -14,7 +14,7 @@ bun run build && bun start
 
 - Boot-terminal intro with a "press ENTER" gate so sound always works (synthesized with the Web Audio API, no audio files).
 - Hover, click and real typewriter key sounds, with a mute toggle.
-- `Ctrl/Cmd + K` opens a terminal command palette (`help`, `projects`, `lang fr`, `sound`, ...).
+- `Ctrl/Cmd + K` opens a terminal command palette (`help`, `projects`, `lang fr`, `sound`, ...) with a few hidden commands. Try `whoami`.
 - One-page site: Hero, Experience and education, Projects, Skills, Services, Contact.
 - System design gallery: diagrams, key decisions and trade-offs for three architectures.
 - Lab: live Web3 demos (wallet and ENS lookup, gas estimator, signature check) and the typewriter sound toy.

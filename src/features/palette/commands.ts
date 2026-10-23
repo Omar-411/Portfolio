@@ -2,6 +2,7 @@ import { profile } from "@/content/profile";
 import { locales, type Locale } from "@/i18n/config";
 import { format } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
+import { runEasterEgg } from "./easter-eggs";
 
 /**
  * Pure command logic for the terminal palette. It never touches the DOM or router:
@@ -14,6 +15,8 @@ export interface PaletteActions {
   download(url: string): void;
   setLocale(locale: Locale): void;
   setMuted(muted: boolean): void;
+  /** Opens the booking dialog once the terminal has closed. */
+  bookCall(): void;
 }
 
 export interface CommandResult {
@@ -62,7 +65,7 @@ const NAVIGATE_CLOSE_MS = 500;
 
 export function helpLines(t: PaletteStrings): string[] {
   const width = Math.max(...COMMAND_NAMES.map((name) => name.length)) + 2;
-  return [t.helpHeader, ...COMMAND_NAMES.map((name) => `  ${name.padEnd(width)}${t.commands[name]}`)];
+  return [t.helpHeader, ...COMMAND_NAMES.map((name) => `  ${name.padEnd(width)}${t.commands[name]}`), "", t.secretHint];
 }
 
 export function welcomeLines(t: PaletteStrings): string[] {
@@ -80,13 +83,16 @@ export function runCommand(
   input: string,
   locale: Locale,
   t: PaletteStrings,
-  actions: PaletteActions
+  actions: PaletteActions,
+  now: Date = new Date()
 ): CommandResult {
   const [rawName = "", ...args] = input.trim().split(/\s+/);
   const name = rawName.toLowerCase();
 
   if (!name) return { lines: [] };
-  if (!isCommandName(name)) return { lines: [format(t.unknown, { name: rawName })] };
+  if (!isCommandName(name)) {
+    return runEasterEgg(input, { locale, t, actions, now }) ?? { lines: [format(t.unknown, { name: rawName })] };
+  }
 
   if (isSection(name)) {
     actions.goToSection(SECTION_COMMANDS[name]);

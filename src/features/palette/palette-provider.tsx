@@ -2,10 +2,11 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { useBooking } from "@/features/booking/booking-provider";
 import { rememberLocale } from "@/i18n/client";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
-import { playClick, setMuted, unlockAudio } from "@/lib/audio";
+import { playClick, playSuccess, setMuted, unlockAudio } from "@/lib/audio";
 import CommandPalette from "./command-palette";
 import { runCommand, type PaletteActions } from "./commands";
 
@@ -32,6 +33,8 @@ export default function PaletteProvider({ locale, t, children }: PaletteProvider
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const returnFocusTo = useRef<HTMLElement | null>(null);
+  const booking = useBooking();
+  const bookAfterClose = useRef(false);
 
   const open = useCallback(() => {
     returnFocusTo.current = document.activeElement as HTMLElement | null;
@@ -42,7 +45,12 @@ export default function PaletteProvider({ locale, t, children }: PaletteProvider
   const close = useCallback(() => {
     setIsOpen(false);
     returnFocusTo.current?.focus?.();
-  }, []);
+    if (bookAfterClose.current) {
+      bookAfterClose.current = false;
+      // After the focus return, so the dialog keeps the focus it takes when it mounts.
+      window.setTimeout(booking.open, 0);
+    }
+  }, [booking.open]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -82,6 +90,10 @@ export default function PaletteProvider({ locale, t, children }: PaletteProvider
       setMuted: (muted) => {
         setMuted(muted);
         if (!muted) void unlockAudio().then(playClick);
+      },
+      bookCall: () => {
+        bookAfterClose.current = true;
+        playSuccess();
       },
     }),
     [locale, pathname, router]
