@@ -34,7 +34,6 @@ const SECTION_COMMANDS = {
   projects: "projects",
   skills: "skills",
   services: "services",
-  contact: "contact",
 } as const;
 
 export const COMMAND_NAMES = [
@@ -44,7 +43,6 @@ export const COMMAND_NAMES = [
   "projects",
   "skills",
   "services",
-  "contact",
   "systems",
   "lab",
   "resume",

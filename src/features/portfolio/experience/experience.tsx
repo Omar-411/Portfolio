@@ -1,5 +1,6 @@
 "use client";
 
+import DecryptText from "@/components/effects/decrypt-text";
 import { m } from "framer-motion";
 import { Briefcase, GraduationCap, Languages } from "lucide-react";
 import type { Dictionary } from "@/i18n/get-dictionary";
@@ -17,7 +18,9 @@ export default function Experience({ t }: { t: Dictionary["experience"] }) {
       <div className="container relative z-10 mx-auto max-w-6xl px-6 py-24">
         <m.div className="mb-12" {...reveal}>
           <p className="mb-2 font-mono text-xs uppercase tracking-widest text-neon-soft">{t.eyebrow}</p>
-          <h2 className="font-display text-4xl font-extrabold text-white md:text-5xl">{t.title}</h2>
+          <h2 className="font-display text-4xl font-extrabold text-white md:text-5xl">
+            <DecryptText text={t.title} />
+          </h2>
           <div className="mt-3 h-[2px] w-16 bg-gradient-to-r from-emerald-400 to-transparent" />
         </m.div>
 

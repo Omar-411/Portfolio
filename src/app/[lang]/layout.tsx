@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import PointerEffects from "@/components/effects/pointer-effects";
 import MotionProvider from "@/components/motion-provider";
 import RootBody from "@/components/root-body";
 import UiSounds from "@/components/ui-sounds";
@@ -61,6 +62,7 @@ export default async function LocaleLayout({
             <BookingProvider locale={lang} t={dictionary.services.booking} bookingUrl={bookingUrl}>
               <PaletteProvider locale={lang} t={dictionary.palette}>
                 <UiSounds />
+                <PointerEffects />
                 {children}
               </PaletteProvider>
             </BookingProvider>

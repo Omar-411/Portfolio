@@ -81,6 +81,7 @@ export default function Hero({ t }: { t: Dictionary["hero"] }) {
             <a
               href={profile.resume}
               download
+              data-magnetic
               className="flex items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-6 py-3 font-semibold text-neon transition-all duration-200 hover:border-emerald-500/60 hover:bg-emerald-500/20 hover:shadow-[0_0_20px_rgba(0,255,106,0.3)]"
             >
               <Download size={15} />
@@ -88,6 +89,7 @@ export default function Hero({ t }: { t: Dictionary["hero"] }) {
             </a>
             <a
               href="#projects"
+              data-magnetic
               className="flex items-center gap-2 rounded-xl border border-white/10 px-6 py-3 text-white/60 transition-all duration-200 hover:border-white/30 hover:text-white"
             >
               {t.viewProjects}

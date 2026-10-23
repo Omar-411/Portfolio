@@ -1,5 +1,6 @@
 "use client";
 
+import DecryptText from "@/components/effects/decrypt-text";
 import { useState, type FormEvent } from "react";
 import { m } from "framer-motion";
 import { Github, Linkedin, Mail, Send } from "lucide-react";
@@ -38,11 +39,11 @@ export default function Contact({ t }: { t: Dictionary["contact"] }) {
         <div className="flex flex-col items-center gap-3">
           <p className="font-mono text-xs uppercase tracking-widest text-neon-soft">{t.eyebrow}</p>
           <h2 className="font-display text-[2.5rem] sm:text-5xl font-extrabold leading-tight text-white md:text-6xl">
-            {t.titleLines[0]}
+            <DecryptText text={t.titleLines[0]} />
             <br />
-            <span className="text-aurora">{t.titleLines[1]}</span>
+            <DecryptText text={t.titleLines[1]} className="text-aurora" delayMs={200} />
             <br />
-            {t.titleLines[2]}
+            <DecryptText text={t.titleLines[2]} delayMs={400} />
           </h2>
           <p className="mt-2 text-base text-white/50">{t.subtitle}</p>
         </div>

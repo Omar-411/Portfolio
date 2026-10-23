@@ -6,7 +6,7 @@ import type { CommandResult, PaletteActions } from "./commands";
 type PaletteStrings = Dictionary["palette"];
 
 /** Hidden commands. They are not listed by `help` or Tab completion on purpose. */
-const SECTION_DIRECTORIES = ["hero", "experience", "projects", "skills", "services", "contact"] as const;
+const SECTION_DIRECTORIES = ["hero", "experience", "projects", "skills", "services"] as const;
 const PAGE_DIRECTORIES = ["systems", "lab"] as const;
 const DIRECTORY_ALIASES: Record<string, (typeof SECTION_DIRECTORIES)[number]> = { about: "hero" };
 

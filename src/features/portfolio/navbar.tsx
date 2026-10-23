@@ -19,7 +19,6 @@ const SECTIONS = [
   { key: "projects", id: "projects" },
   { key: "skills", id: "skills" },
   { key: "services", id: "services" },
-  { key: "contact", id: "contact" },
 ] as const;
 
 const EXTRA_PAGES = [

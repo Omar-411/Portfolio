@@ -1,3 +1,4 @@
+import DecryptText from "@/components/effects/decrypt-text";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import SiteChrome from "@/components/site-chrome";
@@ -23,7 +24,9 @@ export default async function SystemsPage({ params }: PageProps) {
   return (
     <SiteChrome locale={lang} wide>
       <p className="mb-2 font-mono text-xs uppercase tracking-widest text-neon-soft">{t.eyebrow}</p>
-      <h1 className="font-display text-4xl font-extrabold text-white md:text-5xl">{t.title}</h1>
+      <h1 className="font-display text-4xl font-extrabold text-white md:text-5xl">
+        <DecryptText text={t.title} />
+      </h1>
       <div className="mt-3 h-[2px] w-16 bg-gradient-to-r from-emerald-400 to-transparent" />
       <p className="mt-4 max-w-2xl text-white/55">{t.intro}</p>
 

@@ -7,7 +7,8 @@ interface DemoCardProps {
 
 export default function DemoCard({ id, title, description, children }: DemoCardProps) {
   return (
-    <section id={id} aria-labelledby={`${id}-title`} className="glass-card flex flex-col gap-4 p-6">
+    <section id={id} aria-labelledby={`${id}-title`} data-tilt="3"
+      className="glass-card flex flex-col gap-4 p-6">
       <header>
         <h2 id={`${id}-title`} className="font-display text-xl font-bold text-white">
           {title}

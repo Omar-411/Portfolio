@@ -1,6 +1,7 @@
 "use client";
 
 import { useLayoutEffect, useRef } from "react";
+import { randomGlyph } from "@/lib/glyphs";
 import { cn } from "@/lib/utils";
 import {
   createStreams,
@@ -14,7 +15,6 @@ import {
 } from "./name-rain";
 
 const PLAYED_KEY = "portfolio:name-rain";
-const CHARS = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモ0123456789@#$%&*<>/\\|[]{}";
 const SAFETY_MS = 4000;
 
 function alreadyPlayed(): boolean {
@@ -131,7 +131,7 @@ export default function AnimatedName({ first, last }: AnimatedNameProps) {
             if (y < 0 || y > rect.bottom) continue;
             context.globalAlpha = 1 - row / TRAIL_ROWS;
             context.fillStyle = row === 0 ? "#ffffff" : "#00ff6a";
-            context.fillText(CHARS[Math.floor(Math.random() * CHARS.length)], x - GLYPH_SIZE / 2, y);
+            context.fillText(randomGlyph(), x - GLYPH_SIZE / 2, y);
           }
         });
       }

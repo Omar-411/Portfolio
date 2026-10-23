@@ -1,5 +1,6 @@
 "use client";
 
+import DecryptText from "@/components/effects/decrypt-text";
 import { useState, type CSSProperties } from "react";
 import { m } from "framer-motion";
 import { ArrowRight, ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
@@ -35,7 +36,9 @@ export default function Skills({ locale, t }: SkillsProps) {
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
           <p className="mb-3 font-mono text-xs uppercase tracking-widest text-neon-soft">{t.eyebrow}</p>
-          <h2 className="mb-4 font-display text-4xl font-extrabold text-white md:text-5xl">{t.title}</h2>
+          <h2 className="mb-4 font-display text-4xl font-extrabold text-white md:text-5xl">
+            <DecryptText text={t.title} />
+          </h2>
           <div className="mx-auto h-[2px] w-24 bg-gradient-to-r from-emerald-400 to-transparent" />
         </m.div>
 

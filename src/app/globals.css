@@ -114,6 +114,35 @@ body {
 }
 .name-settle { animation: name-settle 0.7s ease-out both; }
 
+/* ── Pointer effects (variables are written by components/effects/pointer-effects.tsx) ── */
+[data-tilt] {
+  position: relative;
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition:
+    transform 0.18s ease-out,
+    translate 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    background-color 0.3s ease;
+}
+
+[data-tilt]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: var(--glow, 0);
+  transition: opacity 0.25s ease;
+  background:
+    radial-gradient(220px circle at var(--px, 50%) var(--py, 50%), rgba(255, 255, 255, 0.1), transparent 60%),
+    radial-gradient(380px circle at var(--px, 50%) var(--py, 50%), rgba(0, 255, 106, 0.14), transparent 65%);
+}
+
+[data-magnetic] {
+  translate: var(--mx, 0px) var(--my, 0px);
+}
+
 /* ── Utilities ── */
 .glass-card {
   backdrop-filter: blur(20px);

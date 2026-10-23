@@ -1,16 +1,12 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { randomGlyph } from "@/lib/glyphs";
 
 interface MatrixRainProps {
   opacity?: number;
   color?: string;
 }
-
-// Katakana block + printable ASCII
-const CHARS =
-  "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン" +
-  "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*<>/\\|[]{}";
 
 const FONT_SIZE = 14;
 const FRAME_MS = 1000 / 30;
@@ -49,7 +45,7 @@ export default function MatrixRain({ opacity = 0.05, color = "#00ff6a" }: Matrix
       columns.forEach((row, i) => {
         const y = row * FONT_SIZE;
         ctx.fillStyle = Math.random() > 0.95 ? "#ffffff" : color;
-        ctx.fillText(CHARS[Math.floor(Math.random() * CHARS.length)], i * FONT_SIZE, y);
+        ctx.fillText(randomGlyph(), i * FONT_SIZE, y);
         columns[i] = y > canvas.height && Math.random() > 0.975 ? 0 : row + 1;
       });
     };

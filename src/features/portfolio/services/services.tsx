@@ -2,6 +2,7 @@
 
 import { m } from "framer-motion";
 import { Blocks, CalendarCheck, Code2, ExternalLink, Server } from "lucide-react";
+import DecryptText from "@/components/effects/decrypt-text";
 import { useBooking } from "@/features/booking/booking-provider";
 import type { Web3Proof } from "@/content/web3";
 import type { Activity } from "@/lib/github";
@@ -32,7 +33,9 @@ export default function Services({ locale, t, bookingUrl, proof, activity }: Ser
       <div className="container relative z-10 mx-auto max-w-6xl px-6 py-24">
         <div className="mb-12 text-center">
           <p className="mb-2 font-mono text-xs uppercase tracking-widest text-neon-soft">{t.eyebrow}</p>
-          <h2 className="font-display text-4xl font-extrabold text-white md:text-5xl">{t.title}</h2>
+          <h2 className="font-display text-4xl font-extrabold text-white md:text-5xl">
+            <DecryptText text={t.title} />
+          </h2>
           <div className="mx-auto mt-3 h-[2px] w-24 bg-gradient-to-r from-emerald-400 to-transparent" />
           <p className="mx-auto mt-4 max-w-xl text-white/50">{t.intro}</p>
         </div>
@@ -43,12 +46,16 @@ export default function Services({ locale, t, bookingUrl, proof, activity }: Ser
             return (
               <m.li
                 key={item.title}
-                className="glass-card group p-6 transition-all duration-300 hover:-translate-y-1 hover:border-emerald-500/40 hover:shadow-[0_0_30px_rgba(0,255,106,0.12)]"
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-60px" }}
                 transition={{ duration: 0.5, delay: i * 0.08, ease: "easeOut" }}
               >
+                {/* The tilt lives on an inner box: framer-motion owns the li's transform. */}
+                <div
+                  data-tilt="6"
+                  className="glass-card group h-full p-6 transition-all duration-300 hover:-translate-y-1 hover:border-emerald-500/40 hover:shadow-[0_0_30px_rgba(0,255,106,0.12)]"
+                >
                 <span className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl border border-neon/25 bg-neon/10 text-neon">
                   <Icon size={20} aria-hidden="true" />
                 </span>
@@ -56,6 +63,7 @@ export default function Services({ locale, t, bookingUrl, proof, activity }: Ser
                   {item.title}
                 </h3>
                 <p className="text-sm leading-relaxed text-white/55">{item.description}</p>
+                </div>
               </m.li>
             );
           })}
@@ -63,12 +71,12 @@ export default function Services({ locale, t, bookingUrl, proof, activity }: Ser
 
         <div className="mt-10 flex justify-center">
           {bookingUrl ? (
-            <a href={bookingUrl} target="_blank" rel="noopener noreferrer" className={ctaClass}>
+            <a href={bookingUrl} target="_blank" rel="noopener noreferrer" data-magnetic className={ctaClass}>
               <CalendarCheck size={16} aria-hidden="true" />
               {t.bookCall}
             </a>
           ) : (
-            <button type="button" onClick={booking.open} className={ctaClass}>
+            <button type="button" onClick={booking.open} data-magnetic className={ctaClass}>
               <CalendarCheck size={16} aria-hidden="true" />
               {t.bookCall}
             </button>

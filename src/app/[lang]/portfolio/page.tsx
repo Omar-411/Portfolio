@@ -5,7 +5,6 @@ import MatrixRain from "@/components/effects/matrix-rain";
 import ScrollProgress from "@/components/effects/scroll-progress";
 import { profile } from "@/content/profile";
 import { web3Proof } from "@/content/web3";
-import Contact from "@/features/portfolio/contact/contact";
 import Experience from "@/features/portfolio/experience/experience";
 import Hero from "@/features/portfolio/hero/hero";
 import Navbar from "@/features/portfolio/navbar";
@@ -54,7 +53,6 @@ export default async function PortfolioPage({ params }: PageProps) {
         <Projects locale={lang} t={dictionary.projects} />
         <Skills locale={lang} t={dictionary.skills} />
         <Services locale={lang} t={dictionary.services} bookingUrl={bookingUrl} proof={web3Proof} activity={activity} />
-        <Contact t={dictionary.contact} />
       </main>
     </>
   );

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import DecryptText from "@/components/effects/decrypt-text";
 import TransitionLink from "@/features/transition/transition-link";
 import { ArrowRight, ChevronLeft, ChevronRight, ExternalLink, Github, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -63,7 +64,9 @@ export default function ProjectCarousel({ projects, locale, t }: ProjectCarousel
       <div className="container relative z-10 mx-auto flex max-w-7xl flex-col px-6 py-16">
         <div className="mb-10">
           <p className="mb-2 font-mono text-xs uppercase tracking-widest text-neon-soft">{t.eyebrow}</p>
-          <h2 className="font-display text-4xl font-extrabold text-white md:text-5xl">{t.title}</h2>
+          <h2 className="font-display text-4xl font-extrabold text-white md:text-5xl">
+            <DecryptText text={t.title} />
+          </h2>
           <div className="mt-3 h-[2px] w-16 bg-gradient-to-r from-emerald-400 to-transparent" />
         </div>
 
@@ -87,6 +90,7 @@ export default function ProjectCarousel({ projects, locale, t }: ProjectCarousel
               <li
                 key={project.repo}
                 data-sound
+                data-tilt="7"
                 className="group glass-card w-[300px] flex-shrink-0 snap-start overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:border-emerald-500/40 hover:shadow-[0_0_40px_rgba(0,255,106,0.15)] sm:w-[320px]"
               >
                 <div className="relative h-40 overflow-hidden">
@@ -200,6 +204,7 @@ export default function ProjectCarousel({ projects, locale, t }: ProjectCarousel
             href={profile.github}
             target="_blank"
             rel="noopener noreferrer"
+            data-magnetic
             className="inline-flex items-center gap-2 rounded-full border border-neon/20 bg-neon/[0.04] px-6 py-2.5 text-sm font-medium text-neon-soft backdrop-blur-xl transition-all duration-300 hover:border-emerald-500/50 hover:bg-neon/[0.08] hover:text-neon"
           >
             <Github size={15} />
