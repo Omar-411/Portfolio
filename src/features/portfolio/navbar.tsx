@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Github, Menu, Terminal, X } from "lucide-react";
@@ -87,9 +88,9 @@ export default function Navbar({ locale, t }: NavbarProps) {
         <Link
           href={hrefFor("hero")}
           aria-label={t.backToTop}
-          className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 font-display text-sm font-bold text-white transition-shadow duration-300 hover:shadow-[0_0_16px_rgba(0,255,106,0.5)]"
+          className="relative block h-10 w-10 overflow-hidden rounded-full ring-2 ring-emerald-400/60 transition-shadow duration-300 hover:shadow-[0_0_18px_rgba(0,255,106,0.55)]"
         >
-          OA
+          <Image src="/pdp-avatar.jpg" alt="" fill sizes="40px" priority className="object-cover" />
         </Link>
 
         <div className="hidden items-center gap-0.5 rounded-full border border-white/10 bg-white/5 px-2 py-1 backdrop-blur-md lg:flex">
