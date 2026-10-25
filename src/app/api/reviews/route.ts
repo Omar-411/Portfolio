@@ -46,8 +46,8 @@ export async function POST(request: Request) {
 
     const link = moderationLink(siteUrl ?? new URL(request.url).origin, review, reviewsSecret);
     if (!(await notifyOwner(review, link))) {
-      // The review is safe in the store; the link in the log is the way to find it.
-      console.warn("[reviews] owner email failed, moderate here:", link);
+      // The review is safe in the store and listed on the admin page; the link in the log is a second way to it.
+      console.warn("[reviews] owner email not sent; the review waits at /admin/reviews. Direct link:", link);
     }
     return NextResponse.json({ ok: true }, { status: 201 });
   } catch (error) {
