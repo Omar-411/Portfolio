@@ -34,6 +34,11 @@ body {
   }
 }
 
+/* The footer is shorter than the screen: snap its bottom edge so the last scroll lands on it. */
+.snap-footer {
+  scroll-snap-align: end;
+}
+
 .snap-section {
   position: relative;
   min-height: 100dvh;

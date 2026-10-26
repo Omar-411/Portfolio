@@ -331,6 +331,16 @@ export const en = {
   },
   footer: {
     rights: "Built with Next.js, Tailwind and a lot of green.",
+    tagline: "Full-stack developer focused on backend, Web3 and products that ship.",
+    status: "Open to freelance and full-time roles",
+    exploreTitle: "Explore",
+    contactTitle: "Contact",
+    infoTitle: "Info",
+    resume: "Download my résumé",
+    bookCall: "Book a call",
+    location: "Tunis, Tunisia",
+    timezone: "Tunis time (UTC+1)",
+    languages: "Arabic, French, English",
   },
 };
 

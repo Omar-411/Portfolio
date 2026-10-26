@@ -334,5 +334,15 @@ export const fr: Dictionary = {
   },
   footer: {
     rights: "Réalisé avec Next.js, Tailwind et beaucoup de vert.",
+    tagline: "Développeur full-stack orienté backend, Web3 et produits qui sortent en production.",
+    status: "Ouvert aux missions freelance et aux postes à temps plein",
+    exploreTitle: "Explorer",
+    contactTitle: "Contact",
+    infoTitle: "Infos",
+    resume: "Télécharger mon CV",
+    bookCall: "Réserver un appel",
+    location: "Tunis, Tunisie",
+    timezone: "Heure de Tunis (UTC+1)",
+    languages: "Arabe, français, anglais",
   },
 };

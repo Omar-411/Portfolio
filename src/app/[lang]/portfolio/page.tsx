@@ -6,6 +6,7 @@ import ScrollProgress from "@/components/effects/scroll-progress";
 import { profile } from "@/content/profile";
 import { web3Proof } from "@/content/web3";
 import Experience from "@/features/portfolio/experience/experience";
+import Footer from "@/features/portfolio/footer/footer";
 import Hero from "@/features/portfolio/hero/hero";
 import Navbar from "@/features/portfolio/navbar";
 import Projects from "@/features/portfolio/projects/projects";
@@ -56,6 +57,7 @@ export default async function PortfolioPage({ params }: PageProps) {
         <Skills locale={lang} t={dictionary.skills} />
         <Services locale={lang} t={dictionary.services} bookingUrl={bookingUrl} proof={web3Proof} activity={activity} />
         {isReviewsConfigured && <Reviews t={dictionary.reviews} reviews={reviews} />}
+        <Footer locale={lang} t={dictionary.footer} nav={dictionary.nav} onPortfolio showReviews={isReviewsConfigured} />
       </main>
     </>
   );
