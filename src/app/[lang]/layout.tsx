@@ -9,7 +9,7 @@ import PaletteProvider from "@/features/palette/palette-provider";
 import TransitionProvider from "@/features/transition/transition-provider";
 import { isLocale, locales } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
-import { bookingUrl, metadataBase, viewport as siteViewport } from "@/lib/site";
+import { bookingUrl, googleVerification, metadataBase, viewport as siteViewport } from "@/lib/site";
 import "../globals.css";
 
 export const dynamicParams = false;
@@ -27,6 +27,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
 
   return {
     metadataBase,
+    ...(googleVerification ? { verification: { google: googleVerification } } : {}),
     title: { default: meta.title, template: "%s | Omar Ajimi" },
     description: meta.description,
     openGraph: {

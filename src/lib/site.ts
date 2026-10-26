@@ -4,6 +4,9 @@ import type { Viewport } from "next";
 const vercelProductionHost = process.env.VERCEL_PROJECT_PRODUCTION_URL;
 export const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || (vercelProductionHost ? `https://${vercelProductionHost}` : undefined))?.replace(/\/$/, "");
 
+/** Token of Google Search Console's "HTML tag" verification method. */
+export const googleVerification = process.env.GOOGLE_SITE_VERIFICATION || undefined;
+
 export const metadataBase = siteUrl ? new URL(siteUrl) : undefined;
 
 export const viewport: Viewport = {

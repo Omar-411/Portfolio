@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import RootBody from "@/components/root-body";
 import { en } from "@/i18n/dictionaries/en";
-import { metadataBase, viewport as siteViewport } from "@/lib/site";
+import { googleVerification, metadataBase, viewport as siteViewport } from "@/lib/site";
 import "../globals.css";
 
 export const metadata: Metadata = {
@@ -10,6 +10,8 @@ export const metadata: Metadata = {
   description: en.meta.portfolioDescription,
   // The intro has no content of its own, so search engines should index the portfolio instead.
   alternates: { canonical: "/en/portfolio" },
+  // Search Console checks the home page, which is this intro.
+  ...(googleVerification ? { verification: { google: googleVerification } } : {}),
 };
 
 export const viewport = siteViewport;
