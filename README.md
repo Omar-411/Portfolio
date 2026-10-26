@@ -20,6 +20,7 @@ bun run build && bun start
 - Motion: the hero name is painted by falling matrix glyphs on the first visit, and pages change with a terminal scan-line wipe. Cards tilt toward the cursor with a light reflection, buttons drift toward it, and section titles decode as they scroll into view. All of it is off under `prefers-reduced-motion` (tilt and magnets also on touch).
 - Lab: live Web3 demos (wallet and ENS lookup, gas estimator, signature check) and the typewriter sound toy.
 - Visitor reviews with approve-before-publish moderation (Upstash Redis, signed email links), see `docs/reviews-setup.md`.
+- Call requests from the booking dialog land in the same private admin page (confirm, decline, reply by email), with atomic slot locking.
 - Real "Book a call" with Google Calendar invitations, case study pages, live GitHub activity, sitemap, robots, Open Graph image, JSON-LD.
 
 ## Configure

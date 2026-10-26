@@ -1,11 +1,8 @@
 import { parseStoredReview, type Review } from "@/features/reviews/review";
-
-// Upstash Redis over its REST API (no SDK). Vercel KV exposes the same service under KV_* names.
-const url = (process.env.KV_REST_API_URL ?? process.env.UPSTASH_REDIS_REST_URL)?.replace(/\/$/, "");
-const token = process.env.KV_REST_API_TOKEN ?? process.env.UPSTASH_REDIS_REST_TOKEN;
+import { isStoreConfigured, read as readStore, run, takeSlot } from "./upstash";
 
 export const reviewsSecret = process.env.REVIEWS_ADMIN_SECRET;
-export const isReviewsConfigured = Boolean(url && token && reviewsSecret);
+export const isReviewsConfigured = Boolean(isStoreConfigured && reviewsSecret);
 
 export const PENDING_TTL_SECONDS = 30 * 24 * 60 * 60;
 export const MAX_SUBMISSIONS_PER_HOUR = 3;
@@ -20,27 +17,8 @@ const REVALIDATE_SECONDS = 60;
 const approvedKey = "reviews:approved";
 const reviewKey = (id: string) => `review:${id}`;
 
-async function run<T>(command: (string | number)[]): Promise<T> {
-  const response = await fetch(url!, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-    body: JSON.stringify(command),
-    cache: "no-store",
-  });
-  const data = (await response.json()) as { result?: T; error?: string };
-  if (!response.ok || data.error) throw new Error(data.error ?? `store answered ${response.status}`);
-  return data.result as T;
-}
-
-async function read<T>(segments: string[], { fresh = false } = {}): Promise<T> {
-  const response = await fetch(`${url}/${segments.map(encodeURIComponent).join("/")}`, {
-    headers: { Authorization: `Bearer ${token}` },
-    ...(fresh ? { cache: "no-store" as const } : { next: { revalidate: REVALIDATE_SECONDS } }),
-  });
-  const data = (await response.json()) as { result?: T; error?: string };
-  if (!response.ok || data.error) throw new Error(data.error ?? `store answered ${response.status}`);
-  return data.result as T;
-}
+const read = <T>(segments: string[], options: { fresh?: boolean } = {}) =>
+  readStore<T>(segments, { ...options, revalidate: REVALIDATE_SECONDS });
 
 /** New reviews wait unapproved and expire on their own if never moderated. */
 export async function savePendingReview(review: Review): Promise<void> {
@@ -112,14 +90,6 @@ export async function listPendingReviews(): Promise<Review[]> {
 
   const reviews = await loadReviews([...new Set(ids)], true);
   return reviews.sort((a, b) => a.createdAt - b.createdAt);
-}
-
-/** Counts one use of `bucket` and says whether it is still within `limit` for the window. */
-export async function takeSlot(bucket: string, limit: number, windowSeconds: number): Promise<boolean> {
-  const key = `reviews:rate:${bucket}`;
-  const count = await run<number>(["INCR", key]);
-  if (count === 1) await run(["EXPIRE", key, windowSeconds]);
-  return count <= limit;
 }
 
 export const takeSubmissionSlot = (key: string) => takeSlot(`submit:${key}`, MAX_SUBMISSIONS_PER_HOUR, 3600);

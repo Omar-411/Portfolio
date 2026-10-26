@@ -32,7 +32,7 @@ export async function submitBooking(request: BookingRequest): Promise<BookingOut
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: request.name, email: request.email, topic: request.topic, slot: request.slot, website: request.website }),
     });
-    if (response.ok) return "invited";
+    if (response.ok) return ((await response.json()) as { mode?: string }).mode === "invited" ? "invited" : "requested";
     if (response.status === 409) return "taken";
     if (response.status !== 501) return "error";
   } catch {

@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { adminPagePath, currentAdminRouting } from "@/lib/admin-path";
 import { ADMIN_COOKIE, ADMIN_SESSION_SECONDS, adminToken, passwordMatches } from "@/lib/admin-session";
 import { hashAddress } from "@/lib/review-signature";
-import { isReviewsConfigured, reviewsSecret, takeSlot } from "@/lib/reviews-store";
+import { isReviewsConfigured, reviewsSecret } from "@/lib/reviews-store";
+import { takeSlot } from "@/lib/upstash";
 
 export const dynamic = "force-dynamic";
 

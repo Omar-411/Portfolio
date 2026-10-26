@@ -1,4 +1,4 @@
-# Visitor reviews
+# Visitor reviews and call requests (admin)
 
 Visitors can leave a review on the portfolio. Nothing is public until you approve it.
 
@@ -37,3 +37,13 @@ Nothing is lost: every review waits on `/admin/reviews`. The server log also pri
 ## Removing a review later
 
 Open the admin page, find it under "Public" and press **Delete**.
+
+# Call requests in the admin page
+
+The "Book a call" dialog also reports to the admin page, so you do not need Google Calendar to receive requests.
+
+- **Storage only (Upstash configured, no `GOOGLE_*`)**: the visitor picks a slot and sends name, email and topic. The request is saved as `pending` and appears under **Call requests** on the admin page. Press **Reply** (opens your mail app with a prefilled message to the visitor), **Confirm** (marks it confirmed), **Decline** (frees the slot) or **Delete**.
+- **Storage and Google Calendar**: the calendar invitation is still sent automatically (status "Invite sent"), and the request is also listed here as a record.
+- **Neither**: the dialog falls back to an email request (FormSubmit), as before.
+
+A slot is claimed atomically (`SET NX`), so two visitors cannot take the same time; a declined or deleted request releases it. Requests are removed from the store after 90 days. Visitors are limited to 5 requests per hour (address hashed, never stored). Slots, notice period and time zone are the ones in `src/features/booking/slots.ts` (Tunis time).
