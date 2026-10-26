@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { Analytics } from "@vercel/analytics/next";
 import PointerEffects from "@/components/effects/pointer-effects";
 import MotionProvider from "@/components/motion-provider";
 import RootBody from "@/components/root-body";
@@ -66,6 +67,7 @@ export default async function LocaleLayout({
             </BookingProvider>
           </TransitionProvider>
         </MotionProvider>
+        <Analytics />
       </RootBody>
     </html>
   );
