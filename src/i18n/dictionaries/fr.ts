@@ -333,7 +333,7 @@ export const fr: Dictionary = {
     },
   },
   footer: {
-    rights: "Réalisé avec Next.js, Tailwind et beaucoup de vert.",
+    rights: " ",
     tagline: "Développeur full-stack orienté backend, Web3 et produits qui sortent en production.",
     status: "Ouvert aux missions freelance et aux postes à temps plein",
     exploreTitle: "Explorer",

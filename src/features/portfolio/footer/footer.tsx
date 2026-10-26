@@ -122,7 +122,7 @@ export default function Footer({ locale, t, nav, onPortfolio, showReviews }: Foo
       <div className="border-t border-white/5">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-6 py-5 text-xs text-white/30 sm:flex-row">
           <p>
-            © {new Date().getFullYear()} {profile.name}. {t.rights}
+            © {new Date().getFullYear()} {profile.alias}. {t.rights}
           </p>
           <TransitionLink href={hrefFor("hero")} className="transition-colors duration-200 hover:text-neon">
             {nav.backToTop} ↑

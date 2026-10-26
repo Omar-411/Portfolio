@@ -1,5 +1,6 @@
 export const profile = {
   name: "Omar Ajimi",
+  alias: "lobster",
   firstName: "OMAR",
   lastName: "AJIMI",
   role: "Full-Stack Developer",

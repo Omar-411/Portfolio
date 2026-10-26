@@ -330,7 +330,7 @@ export const en = {
     },
   },
   footer: {
-    rights: "Built with Next.js, Tailwind and a lot of green.",
+    rights: "",
     tagline: "Full-stack developer focused on backend, Web3 and products that ship.",
     status: "Open to freelance and full-time roles",
     exploreTitle: "Explore",
