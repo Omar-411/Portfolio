@@ -29,9 +29,6 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     metadataBase,
     title: { default: meta.title, template: "%s | Omar Ajimi" },
     description: meta.description,
-    alternates: {
-      languages: Object.fromEntries(locales.map((code) => [code, `/${code}/portfolio`])),
-    },
     openGraph: {
       type: "website",
       title: meta.title,

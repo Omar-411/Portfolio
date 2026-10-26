@@ -6,8 +6,10 @@ import "../globals.css";
 
 export const metadata: Metadata = {
   metadataBase,
-  title: en.meta.title,
-  description: en.meta.description,
+  title: { absolute: en.meta.portfolioTitle },
+  description: en.meta.portfolioDescription,
+  // The intro has no content of its own, so search engines should index the portfolio instead.
+  alternates: { canonical: "/en/portfolio" },
 };
 
 export const viewport = siteViewport;

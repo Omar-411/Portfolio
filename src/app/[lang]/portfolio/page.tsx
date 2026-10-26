@@ -15,6 +15,7 @@ import Skills from "@/features/portfolio/skills/skills";
 import Reviews from "@/features/reviews/reviews";
 import { isLocale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
+import { pageAlternates, portfolioJsonLd } from "@/lib/seo";
 import { fetchRecentActivity } from "@/lib/github";
 import { isReviewsConfigured, listApprovedReviews } from "@/lib/reviews-store";
 import { bookingUrl, siteUrl } from "@/lib/site";
@@ -24,7 +25,13 @@ type PageProps = { params: Promise<{ lang: string }> };
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { lang } = await params;
   if (!isLocale(lang)) return {};
-  return { title: getDictionary(lang).meta.portfolioTitle };
+  const { meta } = getDictionary(lang);
+  return {
+    title: { absolute: meta.portfolioTitle },
+    description: meta.portfolioDescription,
+    alternates: pageAlternates(lang, "/portfolio"),
+    openGraph: { title: meta.portfolioTitle, description: meta.portfolioDescription, url: `/${lang}/portfolio` },
+  };
 }
 
 export default async function PortfolioPage({ params }: PageProps) {
@@ -33,19 +40,11 @@ export default async function PortfolioPage({ params }: PageProps) {
   const dictionary = getDictionary(lang);
   const [activity, reviews] = await Promise.all([fetchRecentActivity(profile.githubUser), listApprovedReviews()]);
 
-  const person = {
-    "@context": "https://schema.org",
-    "@type": "Person",
-    name: profile.name,
-    jobTitle: dictionary.hero.headline,
-    email: profile.email,
-    url: siteUrl,
-    sameAs: [profile.github, profile.linkedin],
-  };
+  const jsonLd = portfolioJsonLd({ siteUrl, jobTitle: dictionary.hero.headline, description: dictionary.meta.portfolioDescription });
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(person) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <AuroraBackground />
       <MatrixRain />
       <ScrollProgress />

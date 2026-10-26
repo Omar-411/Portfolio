@@ -6,6 +6,7 @@ import { systems } from "@/content/systems";
 import SystemDiagram from "@/features/systems/system-diagram";
 import { format, isLocale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
+import { pageAlternates } from "@/lib/seo";
 
 type PageProps = { params: Promise<{ lang: string }> };
 
@@ -13,7 +14,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { lang } = await params;
   if (!isLocale(lang)) return {};
   const { meta } = getDictionary(lang);
-  return { title: meta.systemsTitle, description: meta.systemsDescription };
+  return { title: meta.systemsTitle, description: meta.systemsDescription, alternates: pageAlternates(lang, "/systems") };
 }
 
 export default async function SystemsPage({ params }: PageProps) {

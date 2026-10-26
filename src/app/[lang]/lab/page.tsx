@@ -9,6 +9,7 @@ import TypewriterToy from "@/features/lab/typewriter-toy";
 import WalletLookup from "@/features/lab/wallet-lookup";
 import { isLocale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
+import { pageAlternates } from "@/lib/seo";
 
 type PageProps = { params: Promise<{ lang: string }> };
 
@@ -16,7 +17,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { lang } = await params;
   if (!isLocale(lang)) return {};
   const { meta } = getDictionary(lang);
-  return { title: meta.labTitle, description: meta.labDescription };
+  return { title: meta.labTitle, description: meta.labDescription, alternates: pageAlternates(lang, "/lab") };
 }
 
 export default async function LabPage({ params }: PageProps) {

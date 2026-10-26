@@ -9,6 +9,7 @@ import { profile } from "@/content/profile";
 import { isLocale, locales, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { fetchRepo } from "@/lib/github";
+import { pageAlternates } from "@/lib/seo";
 
 type PageProps = { params: Promise<{ lang: string; slug: string }> };
 
@@ -22,7 +23,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { lang, slug } = await params;
   const study = getCaseStudy(slug);
   if (!isLocale(lang) || !study) return {};
-  return { title: study.title, description: study.summary[lang] };
+  return { title: study.title, description: study.summary[lang], alternates: pageAlternates(lang, `/projects/${slug}`) };
 }
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {

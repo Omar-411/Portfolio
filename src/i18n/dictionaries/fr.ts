@@ -4,7 +4,8 @@ export const fr: Dictionary = {
   meta: {
     title: "Omar Ajimi | Développeur",
     description: "Développeur Full-Stack & Blockchain — projets, expérience, compétences et contact.",
-    portfolioTitle: "Portfolio",
+    portfolioTitle: "Omar Ajimi | Développeur Full-Stack & Web3 à Tunis",
+    portfolioDescription: "Omar Ajimi (lobster) est développeur full-stack freelance à Tunis, en Tunisie. Node.js, React, Next.js et Web3. Découvrez ses projets, son expérience et réservez un appel.",
     systemsTitle: "Systèmes",
     systemsDescription: "Études de conception : SaaS multi-tenant, plateforme de paris et pipeline de documents, avec décisions et compromis.",
     labTitle: "Lab",
@@ -333,7 +334,7 @@ export const fr: Dictionary = {
     },
   },
   footer: {
-    rights: " ",
+    rights: "Réalisé avec Next.js, Tailwind et beaucoup de vert.",
     tagline: "Développeur full-stack orienté backend, Web3 et produits qui sortent en production.",
     status: "Ouvert aux missions freelance et aux postes à temps plein",
     exploreTitle: "Explorer",

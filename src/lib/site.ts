@@ -1,7 +1,8 @@
 import type { Viewport } from "next";
 
-/** Production URL, e.g. https://omarajimi.dev. Optional in development. */
-export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
+/** Production URL, e.g. https://omarajimi.dev. Falls back to the Vercel production host; optional in development. */
+const vercelProductionHost = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+export const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || (vercelProductionHost ? `https://${vercelProductionHost}` : undefined))?.replace(/\/$/, "");
 
 export const metadataBase = siteUrl ? new URL(siteUrl) : undefined;
 
