@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { adminPagePath, currentAdminRouting } from "@/lib/admin-path";
 import { ADMIN_COOKIE, ADMIN_SESSION_SECONDS, adminToken, passwordMatches } from "@/lib/admin-session";
 import { hashAddress } from "@/lib/review-signature";
 import { isReviewsConfigured, reviewsSecret, takeSlot } from "@/lib/reviews-store";
@@ -8,7 +9,7 @@ export const dynamic = "force-dynamic";
 const LOGIN_ATTEMPTS = 8;
 const LOGIN_WINDOW_SECONDS = 15 * 60;
 
-const back = (request: Request, query = "") => NextResponse.redirect(new URL(`/admin/reviews${query}`, request.url), 303);
+const back = (request: Request, query = "") => NextResponse.redirect(new URL(`${adminPagePath(currentAdminRouting())}${query}`, request.url), 303);
 
 export async function POST(request: Request) {
   if (!isReviewsConfigured || !reviewsSecret) return back(request);

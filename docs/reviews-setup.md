@@ -6,7 +6,7 @@ Visitors can leave a review on the portfolio. Nothing is public until you approv
 
 1. A visitor fills in the form (name, optional role, 1 to 5 stars, 20 to 600 characters, no links).
 2. The review is saved as pending in Upstash Redis and expires after 30 days if you never act on it.
-3. You moderate it on **`/admin/reviews`** of your own site: log in with your `REVIEWS_ADMIN_SECRET`, then press **Approve** or **Delete** next to each review. The page also lists the public reviews so you can delete one later.
+3. You moderate it on the admin page of your own site (at `/admin/reviews`, or at your private address, see below): log in with your `REVIEWS_ADMIN_SECRET`, then press **Approve** or **Delete** next to each review. The page also lists the public reviews so you can delete one later.
 4. Optionally you also get an email with the review and a private approve/delete link (sent through Resend when `RESEND_API_KEY` is set, otherwise through FormSubmit, which often refuses server requests). The admin page works without any email setup.
 5. Approved reviews show on `/{en|fr}/portfolio` within a minute or two (the pages refresh every 60 seconds).
 
@@ -14,12 +14,17 @@ Admin login: the password is `REVIEWS_ADMIN_SECRET`. The browser only keeps a si
 
 Protection against spam: hidden honeypot field, 3 submissions per hour per visitor (the address is hashed, never stored), links in the text are refused, and no email address is collected from visitors.
 
+## Keep the admin address private
+
+The repository is public, so the default address `/admin/reviews` is known. Set `REVIEWS_ADMIN_PATH` to something only you know, for example `k3x9-inbox-7q2m` (8 to 64 letters, digits, `-` or `_`; not `admin`, `api`, `en`, `fr`). The page is then at `https://your-site/k3x9-inbox-7q2m` and `/admin/reviews` answers 404. If the value is set but not valid, the page is switched off entirely instead of falling back to the public address. The address is read at runtime, so changing it needs a restart or redeploy, not a rebuild. The password is still required on top of the hidden address.
+
 ## Setup
 
 1. Create a free Redis database at [upstash.com](https://upstash.com) (or add Upstash from the Vercel Marketplace, which sets the variables for you).
 2. Set in your hosting environment (and `.env.local` to try it locally):
    - `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` from the database's REST API tab (Vercel KV's `KV_REST_API_URL` / `KV_REST_API_TOKEN` also work).
    - `REVIEWS_ADMIN_SECRET`: run `openssl rand -hex 32`.
+   - `REVIEWS_ADMIN_PATH`: your private admin address (see above).
    - `NEXT_PUBLIC_SITE_URL`, so the emailed link points at your real domain.
    - `RESEND_API_KEY` (optional, for an email when a review arrives): create a free account at [resend.com](https://resend.com), then API Keys → Create. With the default sender the emails can only go to the address you signed up with, so use that one (or set `REVIEWS_NOTIFY_EMAIL`). To send to another address, verify a domain in Resend and set `RESEND_FROM`.
    - Without Resend, `NEXT_PUBLIC_FORMSUBMIT_ALIAS` (an activated FormSubmit alias) is tried instead, but FormSubmit often refuses server-side requests.
@@ -31,4 +36,4 @@ Nothing is lost: every review waits on `/admin/reviews`. The server log also pri
 
 ## Removing a review later
 
-Open `/admin/reviews`, find it under "Public" and press **Delete**.
+Open the admin page, find it under "Public" and press **Delete**.

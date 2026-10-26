@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
+import { adminPagePath, currentAdminRouting } from "@/lib/admin-path";
 import { isAdmin } from "@/lib/admin-auth";
 import { approveReview, isReviewsConfigured, rejectReview } from "@/lib/reviews-store";
 
 export const dynamic = "force-dynamic";
 
-const back = (request: Request, query = "") => NextResponse.redirect(new URL(`/admin/reviews${query}`, request.url), 303);
+const back = (request: Request, query = "") => NextResponse.redirect(new URL(`${adminPagePath(currentAdminRouting())}${query}`, request.url), 303);
 
 /** Approve or delete one review. Needs the admin cookie; the cookie is SameSite=Strict, so other sites cannot trigger it. */
 export async function POST(request: Request) {
